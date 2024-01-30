@@ -1,2 +1,3 @@
 # athena-client-feign
-Feign client for Athena
+
+Feign client for Athena APIs
