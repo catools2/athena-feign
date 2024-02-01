@@ -5,7 +5,6 @@ import feign.Param;
 import feign.RequestLine;
 import feign.Response;
 import org.catools.athena.core.model.MetadataDto;
-import org.catools.athena.core.model.UserDto;
 
 import java.util.Set;
 

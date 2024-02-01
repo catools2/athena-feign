@@ -1,17 +1,11 @@
 package org.catools.athena.rest.feign.pipeline.utils;
 
-import feign.Feign;
 import feign.FeignException;
-import feign.Logger;
-import feign.okhttp.OkHttpClient;
-import feign.slf4j.Slf4jLogger;
 import lombok.experimental.UtilityClass;
 import org.catools.athena.pipeline.model.PipelineDto;
-import org.catools.athena.rest.feign.client.FeignClient;
-import org.catools.athena.rest.feign.configs.CoreConfigs;
-import org.catools.athena.rest.feign.core.clients.EnvironmentClient;
-import org.catools.athena.rest.feign.core.clients.ProjectClient;
-import org.catools.athena.rest.feign.core.clients.UserClient;
+import org.catools.athena.rest.feign.core.client.EnvironmentClient;
+import org.catools.athena.rest.feign.core.client.ProjectClient;
+import org.catools.athena.rest.feign.core.client.UserClient;
 import org.catools.athena.rest.feign.pipeline.clients.ExecutionClient;
 import org.catools.athena.rest.feign.pipeline.clients.ExecutionStatusClient;
 import org.catools.athena.rest.feign.pipeline.clients.PipelineClient;
@@ -19,11 +13,10 @@ import org.catools.athena.rest.feign.pipeline.clients.ScenarioExecutionClient;
 
 import java.util.Optional;
 
-import static org.catools.athena.rest.feign.client.FeignClient.getClient;
+import static org.catools.athena.rest.feign.common.utils.FeignUtils.getClient;
 
 @UtilityClass
 public class PipelineUtils {
-  private static final String DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
 
   public static Optional<PipelineDto> getPipeline(final String pipelineName, final String pipelineNumber, final String environmentCode) {
     try {

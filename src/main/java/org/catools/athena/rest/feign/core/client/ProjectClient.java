@@ -1,20 +1,18 @@
-package org.catools.athena.rest.feign.core.clients;
+package org.catools.athena.rest.feign.core.client;
 
 import feign.Headers;
 import feign.Param;
 import feign.RequestLine;
+import feign.Response;
 import org.catools.athena.core.model.ProjectDto;
 
 import java.util.Set;
 
 public interface ProjectClient {
   @RequestLine("GET /project?projectCode={projectCode}")
-  ProjectDto getProject(@Param("projectCode") String projectCode);
-
-  @RequestLine("GET /projects")
-  Set<ProjectDto> getProjects();
+  ProjectDto getByCode(@Param("projectCode") String projectCode);
 
   @RequestLine("POST /project")
   @Headers("Content-Type: application/json")
-  ProjectDto saveProject(ProjectDto project);
+  Response save(ProjectDto project);
 }

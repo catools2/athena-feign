@@ -1,8 +1,10 @@
-package org.catools.athena.rest.feign.configs;
+package org.catools.athena.rest.feign.common.configs;
 
+import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
+@UtilityClass
 public class CoreConfigs {
   public static String getHost() {
     return ConfigUtils.getString("athena.host");

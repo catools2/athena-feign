@@ -7,10 +7,10 @@ import feign.Response;
 import org.catools.athena.pipeline.model.PipelineScenarioExecutionDto;
 
 public interface ScenarioExecutionClient {
-    @RequestLine("POST /scenario")
-    @Headers("Content-Type: application/json")
-    Response saveScenarioExecution(PipelineScenarioExecutionDto execution);
+  @RequestLine("POST /scenario")
+  @Headers("Content-Type: application/json")
+  Response saveScenarioExecution(PipelineScenarioExecutionDto execution);
 
-    @RequestLine("GET /scenario/{id}")
-    PipelineScenarioExecutionDto getScenarioExecution(@Param("id") Long id);
+  @RequestLine("GET /scenario/{id}")
+  PipelineScenarioExecutionDto getScenarioExecution(@Param("id") Long id);
 }

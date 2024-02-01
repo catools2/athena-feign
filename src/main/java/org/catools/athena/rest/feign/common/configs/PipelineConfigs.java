@@ -1,11 +1,13 @@
-package org.catools.athena.rest.feign.configs;
+package org.catools.athena.rest.feign.common.configs;
 
+import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import org.catools.athena.core.model.MetadataDto;
 
 import java.util.Set;
 
 @Slf4j
+@UtilityClass
 public class PipelineConfigs {
   public static String getExecutorName() {
     return ConfigUtils.getString("athena.pipeline.executor.name");
