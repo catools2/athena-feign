@@ -7,10 +7,10 @@ import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import org.catools.athena.apispec.model.ApiPathDto;
 import org.catools.athena.apispec.model.ApiSpecDto;
-import org.catools.athena.apispec.utils.ApiSpecDtoUtils;
 import org.catools.athena.core.model.ProjectDto;
 import org.catools.athena.rest.feign.apispec.client.ApiPathClient;
 import org.catools.athena.rest.feign.apispec.client.ApiSpecClient;
+import org.catools.athena.rest.feign.apispec.utils.ApiSpecUtils;
 import org.catools.athena.rest.feign.common.configs.CoreConfigs;
 import org.catools.athena.rest.feign.core.client.ProjectClient;
 
@@ -48,13 +48,13 @@ public class ApiSpecLoader {
   }
 
   public static Response saveApiSpec(OpenAPI openAPI, String specName) {
-    ApiSpecDto apiSpec = ApiSpecDtoUtils.getApiSpec(openAPI, specName, getProject().getCode());
+    ApiSpecDto apiSpec = ApiSpecUtils.getApiSpec(openAPI, specName, getProject().getCode());
     return API_SPEC_CLIENT.save(apiSpec);
   }
 
   public static Set<Response> saveApiPaths(OpenAPI openAPI, Long apiSpecId) {
     Set<Response> responses = new HashSet<>();
-    Set<ApiPathDto> apiPaths = ApiSpecDtoUtils.getApiPaths(openAPI, apiSpecId);
+    Set<ApiPathDto> apiPaths = ApiSpecUtils.getApiPaths(openAPI, apiSpecId);
 
     for (ApiPathDto apiPath : apiPaths) {
       responses.add(saveApiPath(apiPath));

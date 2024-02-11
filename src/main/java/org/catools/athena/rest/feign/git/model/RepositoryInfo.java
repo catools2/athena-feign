@@ -13,6 +13,7 @@ import org.catools.athena.git.model.CommitDto;
 import org.catools.athena.git.model.DiffEntryDto;
 import org.catools.athena.git.model.GitRepositoryDto;
 import org.catools.athena.git.model.TagDto;
+import org.catools.athena.rest.feign.git.exception.GitClientException;
 import org.catools.athena.rest.feign.git.helpers.AthenaGitApi;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
@@ -43,60 +44,58 @@ import java.util.concurrent.TimeUnit;
 @Accessors(chain = true)
 @Slf4j
 public class RepositoryInfo {
+
   @Getter(AccessLevel.NONE)
   private final Git git;
   private final String name;
   private final String url;
-  private final boolean persistRecords;
 
   private GitRepositoryDto repositoryDto = new GitRepositoryDto();
   private Set<UserDto> users = new HashSet<>();
-  private Set<TagDto> tags = new HashSet<>();
-  private Set<MetadataDto> metadata = new HashSet<>();
-  private Set<CommitDto> commits = new HashSet<>();
 
-  public void readRepository(int totalThreads, long timeout, TimeUnit unit) throws GitAPIException, IOException, InterruptedException {
-    readRepository(totalThreads, timeout, unit, null);
+  public boolean uploadRepository(int totalThreads, long timeout, TimeUnit unit) throws InterruptedException {
+    return uploadRepository(totalThreads, timeout, unit, null);
   }
 
-  public void readRepository(Date since, Date until, int totalThreads, long timeout, TimeUnit unit) throws GitAPIException, IOException, InterruptedException {
-    readRepository(totalThreads, timeout, unit, CommitTimeRevFilter.between(since, until));
+  public boolean uploadRepository(Date since, Date until, int totalThreads, long timeout, TimeUnit unit) throws InterruptedException {
+    return uploadRepository(totalThreads, timeout, unit, CommitTimeRevFilter.between(since, until));
   }
 
-  public void readRepository(int totalThreads, long timeout, TimeUnit unit, RevFilter filter) throws GitAPIException, IOException, InterruptedException {
-    setRepository();
-    readCommits(filter, totalThreads, timeout, unit);
+  public boolean uploadRepository(int totalThreads, long timeout, TimeUnit unit, RevFilter filter) throws InterruptedException {
+    readRepository();
+    return readCommits(filter, totalThreads, timeout, unit);
   }
 
-  protected void setRepository() {
+  protected void readRepository() {
     repositoryDto = new GitRepositoryDto();
     repositoryDto.setUrl(url);
     repositoryDto.setName(name);
     repositoryDto.setLastSync(Instant.now());
-    if (persistRecords)
-      AthenaGitApi.persistRepository(repositoryDto);
+    onPersistRepository();
   }
 
-  protected void readCommits(RevFilter filter, int totalThreads, long timeout, TimeUnit unit) throws IOException, GitAPIException, InterruptedException {
-    Iterator<RevCommit> commits = git.log().setRevFilter(filter).all().call().iterator();
+  protected boolean readCommits(RevFilter filter, int totalThreads, long timeout, TimeUnit unit) throws InterruptedException {
+    Iterator<RevCommit> commits;
+    try {
+      commits = git.log().setRevFilter(filter).all().call().iterator();
+    } catch (GitAPIException | IOException e) {
+      throw new GitClientException("Failed to read commits from repository", e);
+    }
 
     Repository repo = git.getRepository();
     ExecutorService executor = Executors.newFixedThreadPool(totalThreads);
     executor.execute(() -> {
       while (commits.hasNext()) {
-        try {
-          readCommit(repo, commits.next());
-        } catch (Exception e) {
-          throw new RuntimeException(e);
-        }
+        readCommit(repo, commits.next());
       }
     });
     executor.shutdown();
-    executor.awaitTermination(timeout, unit);
+    return executor.awaitTermination(timeout, unit);
   }
 
-  protected void readCommit(Repository repo, RevCommit commit) throws IOException, GitAPIException {
+  protected void readCommit(Repository repo, RevCommit commit) {
     CommitDto gitCommit = new CommitDto();
+    gitCommit.setRepository(name);
     gitCommit.setHash(commit.getName());
 
     if (commit.getParentCount() > 0)
@@ -113,49 +112,38 @@ public class RepositoryInfo {
     readRelatedTags(commit, gitCommit);
     readMetadata(repo, commit, gitCommit);
 
-    gitCommit.setInserted(gitCommit.getDiffEntries().stream().map(DiffEntryDto::getInserted).reduce(Integer::sum).orElse(0));
-    gitCommit.setDeleted(gitCommit.getDiffEntries().stream().map(DiffEntryDto::getDeleted).reduce(Integer::sum).orElse(0));
+    AthenaGitApi.persistCommit(gitCommit);
 
-    if (persistRecords)
-      AthenaGitApi.persistCommit(this, gitCommit);
-
-    commits.add(gitCommit);
-
-    log.info("{} process finished, diffs: {} [+{},-{}], author: {}, committer: {}, tags: {}, metadata: {}. [total commits: {}]",
+    log.info("{} process finished, diffs: {}, author: {}, committer: {}, tags: {}, metadata: {}.",
         gitCommit.getHash(),
         gitCommit.getDiffEntries().size(),
-        gitCommit.getInserted(),
-        gitCommit.getDeleted(),
         gitCommit.getAuthor(),
         gitCommit.getCommitter(),
         gitCommit.getTags().size(),
-        gitCommit.getMetadata().size(),
-        commits.size());
+        gitCommit.getMetadata().size());
   }
 
   protected Set<MetadataDto> readMetadata(Repository repo, RevCommit commit, CommitDto gitCommit) {
     return new HashSet<>();
   }
 
-  protected void readRelatedTags(RevCommit commit, CommitDto gitCommit) throws IOException, GitAPIException {
-    List<Ref> list = git.tagList().setContains(commit.getId()).call();
+  protected void readRelatedTags(RevCommit commit, CommitDto gitCommit) {
+    try {
+      List<Ref> list = git.tagList().setContains(commit.getId()).call();
+      gitCommit.getTags().clear();
+      for (Ref rTag : list) {
+        TagDto tag = new TagDto()
+            .setName(rTag.getName());
 
-    gitCommit.getTags().clear();
-    for (Ref rTag : list) {
-      TagDto tag = new TagDto()
-          .setName(rTag.getName());
+        ObjectId tagObjectId = rTag.getObjectId();
+        if (tagObjectId != null)
+          tag.setHash(tagObjectId.getName());
 
-      ObjectId tagObjectId = rTag.getObjectId();
-      if (tagObjectId != null)
-        tag.setHash(tagObjectId.getName());
-
-      if (persistRecords)
-        AthenaGitApi.persistTag(tag);
-
-      gitCommit.getTags().add(tag);
+        gitCommit.getTags().add(tag);
+      }
+    } catch (GitAPIException | IOException e) {
+      throw new GitClientException("Failed to read tags for commit", e);
     }
-
-    tags.addAll(gitCommit.getTags());
   }
 
   protected String readPerson(PersonIdent person) {
@@ -170,14 +158,13 @@ public class RepositoryInfo {
     } else if (!StringUtils.isEmptyOrNull(person.getEmailAddress()))
       user.setUsername(person.getEmailAddress().toLowerCase());
 
-    if (persistRecords)
-      AthenaGitApi.persistUser(user);
+    AthenaGitApi.persistUser(user);
 
     users.add(user);
     return user.getUsername();
   }
 
-  protected void readDiffEntries(Repository repo, RevCommit commit, CommitDto gitCommit) throws IOException {
+  protected void readDiffEntries(Repository repo, RevCommit commit, CommitDto gitCommit) {
     gitCommit.getDiffEntries().clear();
 
     if (commit.getParentCount() == 0) {
@@ -187,7 +174,7 @@ public class RepositoryInfo {
     }
   }
 
-  protected void readCommitDiff(Repository repo, RevCommit commit, RevCommit parent, Set<DiffEntryDto> diffEntries) throws IOException {
+  protected void readCommitDiff(Repository repo, RevCommit commit, RevCommit parent, Set<DiffEntryDto> diffEntries) {
     AbstractTreeIterator parentTree = getParser(repo, parent);
     AbstractTreeIterator commitTree = getParser(repo, commit);
 
@@ -196,14 +183,18 @@ public class RepositoryInfo {
     diffFormatter.setRepository(repo);
     diffFormatter.setDetectRenames(true);
 
-    List<DiffEntry> entries = diffFormatter.scan(parentTree, commitTree);
+    try {
+      List<DiffEntry> entries = diffFormatter.scan(parentTree, commitTree);
 
-    for (DiffEntry entry : entries) {
-      readDiffEntry(entry, diffFormatter, diffEntries);
+      for (DiffEntry entry : entries) {
+        readDiffEntry(entry, diffFormatter, diffEntries);
+      }
+    } catch (IOException e) {
+      throw new GitClientException("Failed to read diff entries.", e);
     }
   }
 
-  protected void readDiffEntry(DiffEntry entry, DiffFormatter diffFormatter, Set<DiffEntryDto> diffEntries) throws IOException {
+  protected void readDiffEntry(DiffEntry entry, DiffFormatter diffFormatter, Set<DiffEntryDto> diffEntries) {
     DiffEntryDto gitFileChange = new DiffEntryDto();
     gitFileChange.setOldPath(entry.getOldPath());
     gitFileChange.setNewPath(entry.getNewPath());
@@ -211,11 +202,14 @@ public class RepositoryInfo {
     gitFileChange.setInserted(0);
     gitFileChange.setDeleted(0);
 
-    EditList edits = diffFormatter.toFileHeader(entry).toEditList();
-
-    for (Edit edit : edits) {
-      gitFileChange.setDeleted(gitFileChange.getDeleted() + edit.getLengthA());
-      gitFileChange.setInserted(gitFileChange.getInserted() + edit.getLengthB());
+    try {
+      EditList edits = diffFormatter.toFileHeader(entry).toEditList();
+      for (Edit edit : edits) {
+        gitFileChange.setDeleted(gitFileChange.getDeleted() + edit.getLengthA());
+        gitFileChange.setInserted(gitFileChange.getInserted() + edit.getLengthB());
+      }
+    } catch (IOException e) {
+      throw new GitClientException("Failed to get edit list from commit.", e);
     }
 
     diffEntries.add(gitFileChange);
@@ -230,16 +224,24 @@ public class RepositoryInfo {
 
       return out.toString();
     } catch (IOException e) {
-      throw new RuntimeException(e);
+      throw new GitClientException("Failed to read content diff.", e);
     }
   }
 
-  private static AbstractTreeIterator getParser(Repository repo, RevCommit commi) throws IOException {
-    if (commi == null)
+  private static AbstractTreeIterator getParser(Repository repo, RevCommit commit) {
+    if (commit == null)
       return new EmptyTreeIterator();
 
-    CanonicalTreeParser parentTree = new CanonicalTreeParser();
-    parentTree.reset(repo.newObjectReader(), commi.getTree());
-    return parentTree;
+    try {
+      CanonicalTreeParser parentTree = new CanonicalTreeParser();
+      parentTree.reset(repo.newObjectReader(), commit.getTree());
+      return parentTree;
+    } catch (IOException e) {
+      throw new GitClientException("Failed to parse commit.", e);
+    }
+  }
+
+  private void onPersistRepository() {
+    AthenaGitApi.persistRepository(repositoryDto);
   }
 }

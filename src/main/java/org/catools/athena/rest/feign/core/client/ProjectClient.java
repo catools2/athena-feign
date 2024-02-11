@@ -6,8 +6,6 @@ import feign.RequestLine;
 import feign.Response;
 import org.catools.athena.core.model.ProjectDto;
 
-import java.util.Set;
-
 public interface ProjectClient {
   @RequestLine("GET /project?projectCode={projectCode}")
   ProjectDto getByCode(@Param("projectCode") String projectCode);
