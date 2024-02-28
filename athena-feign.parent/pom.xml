@@ -1,0 +1,421 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>org.catools</groupId>
+    <artifactId>athena-feign.parent</artifactId>
+    <version>${revision}</version>
+    <packaging>pom</packaging>
+
+    <name>Athena Feign Clients - Parent</name>
+    <description>The parent pom for Athena Feign clients</description>
+
+    <properties>
+        <!-- Project configuration -->
+        <revision>1.0.0-SNAPSHOT</revision>
+
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+
+        <java.version>17</java.version>
+        <maven.compiler.source>${java.version}</maven.compiler.source>
+        <maven.compiler.target>${java.version}</maven.compiler.target>
+
+        <athena-core.version>0.0.1</athena-core.version>
+
+        <!-- ###################### CORE ######################### -->
+        <lombok.version>1.18.30</lombok.version>
+        <junit-jupiter.version>5.10.1</junit-jupiter.version>
+        <feign.version>13.2.1</feign.version>
+        <slf4j-api.version>2.1.0-alpha1</slf4j-api.version>
+        <log4j-slf4j2-impl.version>3.0.0-beta2</log4j-slf4j2-impl.version>
+
+        <!-- ###################### GIT ######################### -->
+        <jgit.version>6.8.0.202311291450-r</jgit.version>
+
+        <!-- ###################### ATLASSIAN ######################### -->
+        <jira-rest-java-client-core.version>5.2.4</jira-rest-java-client-core.version>
+        <fugue.version>4.7.2</fugue.version>
+
+        <!-- ###################### KUBERNETES ######################### -->
+        <kubernetes.client-java.version>20.0.0-legacy</kubernetes.client-java.version>
+
+        <!-- ###################### CONFIG ######################### -->
+        <typesafe.version>1.4.3</typesafe.version>
+
+        <!-- ###################### VALIDATOR ######################### -->
+        <hibernate-validator.version>8.0.1.Final</hibernate-validator.version>
+
+        <!-- ###################### PLUGIN ######################### -->
+        <maven-failsafe-plugin.version>3.1.2</maven-failsafe-plugin.version>
+        <maven-compiler-plugin.version>3.12.1</maven-compiler-plugin.version>
+        <maven-surefire-plugin.version>3.1.2</maven-surefire-plugin.version>
+        <maven-source-plugin.version>3.3.0</maven-source-plugin.version>
+        <maven-javadoc-plugin.version>3.6.3</maven-javadoc-plugin.version>
+        <maven-clean-plugin.version>3.3.2</maven-clean-plugin.version>
+        <flatten-maven-plugin.version>1.6.0</flatten-maven-plugin.version>
+        <versions-maven-plugin.version>2.16.2</versions-maven-plugin.version>
+
+        <argLine/>
+
+
+        <!-- Repository Path -->
+        <mvn.repo.url>https://repo.maven.apache.org/maven2</mvn.repo.url>
+    </properties>
+
+    <repositories>
+
+        <repository>
+            <id>central</id>
+            <url>${mvn.repo.url}</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+
+        <repository>
+            <id>spring-milestones</id>
+            <url>https://repo.spring.io/milestone</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+
+        <repository>
+            <id>atlassian</id>
+            <url>https://packages.atlassian.com/mvn/maven-atlassian-external/</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+
+        <repository>
+            <id>github</id>
+            <url>https://maven.pkg.github.com/catools2/athena-core</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+
+    </repositories>
+
+    <pluginRepositories>
+        <pluginRepository>
+            <id>central</id>
+            <url>${mvn.repo.url}</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </pluginRepository>
+    </pluginRepositories>
+
+    <distributionManagement>
+        <repository>
+            <id>github</id>
+            <name>GitHub Packages</name>
+            <url>https://maven.pkg.github.com/catools2/athena</url>
+        </repository>
+    </distributionManagement>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.eclipse.jgit</groupId>
+                <artifactId>org.eclipse.jgit</artifactId>
+                <version>${jgit.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.hibernate.validator</groupId>
+                <artifactId>hibernate-validator</artifactId>
+                <version>${hibernate-validator.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>io.swagger.core.v3</groupId>
+                <artifactId>swagger-core</artifactId>
+                <version>2.2.20</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.beust</groupId>
+                <artifactId>jcommander</artifactId>
+                <version>1.82</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.jayway.jsonpath</groupId>
+                <artifactId>json-path</artifactId>
+                <version>2.9.0</version>
+            </dependency>
+
+            <dependency>
+                <groupId>dev.failsafe</groupId>
+                <artifactId>failsafe</artifactId>
+                <version>3.3.2</version>
+            </dependency>
+
+            <!-- ##################### k8s        ######################### -->
+            <dependency>
+                <groupId>io.kubernetes</groupId>
+                <artifactId>client-java</artifactId>
+                <version>${kubernetes.client-java.version}</version>
+            </dependency>
+            <!-- ##################### /k8s       ######################### -->
+
+            <!-- ###################### ATLASSIAN ######################### -->
+            <dependency>
+                <groupId>com.atlassian.jira</groupId>
+                <artifactId>jira-rest-java-client-api</artifactId>
+                <version>${jira-rest-java-client-core.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.atlassian.jira</groupId>
+                <artifactId>jira-rest-java-client-core</artifactId>
+                <version>${jira-rest-java-client-core.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>io.atlassian.fugue</groupId>
+                <artifactId>fugue</artifactId>
+                <version>${fugue.version}</version>
+            </dependency>
+            <!-- ##################### /ATLASSIAN ######################### -->
+
+        </dependencies>
+    </dependencyManagement>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.catools</groupId>
+            <artifactId>athena-core</artifactId>
+            <version>${athena-core.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>${lombok.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- ######################### Config ########################### -->
+        <dependency>
+            <groupId>com.typesafe</groupId>
+            <artifactId>config</artifactId>
+            <version>${typesafe.version}</version>
+        </dependency>
+        <!-- ######################### /Config ########################### -->
+
+        <!-- ######################### Logging ########################### -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>${slf4j-api.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-slf4j2-impl</artifactId>
+            <version>${log4j-slf4j2-impl.version}</version>
+        </dependency>
+        <!-- ######################### /Logging ########################### -->
+
+        <!-- ######################### Feign ########################### -->
+        <dependency>
+            <groupId>io.github.openfeign</groupId>
+            <artifactId>feign-okhttp</artifactId>
+            <version>${feign.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>io.github.openfeign</groupId>
+            <artifactId>feign-jackson</artifactId>
+            <version>${feign.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>io.github.openfeign</groupId>
+            <artifactId>feign-slf4j</artifactId>
+            <version>${feign.version}</version>
+        </dependency>
+
+        <!-- ######################  Plugins ######################### -->
+        <dependency>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-source-plugin</artifactId>
+            <version>${maven-source-plugin.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-javadoc-plugin</artifactId>
+            <version>${maven-javadoc-plugin.version}</version>
+        </dependency>
+        <!-- ######################  /Plugins ######################### -->
+    </dependencies>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>${maven-compiler-plugin.version}</version>
+                    <configuration>
+                        <source>${maven.compiler.source}</source>
+                        <target>${maven.compiler.source}</target>
+                        <release>${maven.compiler.source}</release>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-resources-plugin</artifactId>
+                    <version>3.3.1</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>3.1.2</version>
+                    <configuration>
+                        <argLine>
+                            --add-opens java.base/java.util=ALL-UNNAMED
+                            --add-opens java.base/java.io=ALL-UNNAMED
+                            --add-opens java.base/java.time=ALL-UNNAMED
+                            --add-opens java.sql/java.sql=ALL-UNNAMED
+                            --add-opens java.base/sun.util.calendar=ALL-UNNAMED
+                            --add-opens java.base/java.time.zone=ALL-UNNAMED
+                            -Xmx2g
+                            -Djava.net.preferIPv4Stack=true
+                            -Duser.timezone=America/New_York
+                            @{argLine}
+                        </argLine>
+                        <shutdown>kill</shutdown>
+                        <reuseForks>false</reuseForks>
+                        <workingDirectory>./test-output</workingDirectory>
+                        <parallel>methods</parallel>
+                        <threadCount>100</threadCount>
+                        <rerunFailingTestsCount>5</rerunFailingTestsCount>
+                        <properties>
+                            <property>
+                                <name>junit</name>
+                                <value>false</value>
+                            </property>
+                        </properties>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+        <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>versions-maven-plugin</artifactId>
+                <version>${versions-maven-plugin.version}</version>
+                <configuration>
+                    <excludes>
+                        <exclude>org.apache.commons:commons-collections4</exclude>
+                    </excludes>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-clean-plugin</artifactId>
+                <version>${maven-clean-plugin.version}</version>
+                <configuration>
+                    <failOnError>true</failOnError>
+                    <filesets>
+                        <fileset>
+                            <directory>test-output</directory>
+                        </fileset>
+                    </filesets>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>flatten-maven-plugin</artifactId>
+                <version>${flatten-maven-plugin.version}</version>
+                <configuration>
+                    <updatePomFile>true</updatePomFile>
+                    <pomElements>
+                        <name/>
+                        <description/>
+                        <url/>
+                        <scm/>
+                        <properties/>
+                        <developers/>
+                        <repositories/>
+                        <pluginManagement/>
+                        <pluginRepositories/>
+                        <dependencyManagement/>
+                        <distributionManagement/>
+                    </pomElements>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>flatten</id>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>flatten</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>flatten.clean</id>
+                        <phase>clean</phase>
+                        <goals>
+                            <goal>clean</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+    <profiles>
+        <profile>
+            <id>release</id>
+            <activation>
+                <property>
+                    <name>release</name>
+                    <value>true</value>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-source-plugin</artifactId>
+                        <version>${maven-source-plugin.version}</version>
+                        <executions>
+                            <execution>
+                                <id>attach-sources</id>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <version>${maven-javadoc-plugin.version}</version>
+                        <executions>
+                            <execution>
+                                <id>attach-javadocs</id>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <additionalOptions>
+                                <additionalOption>-Xdoclint:none</additionalOption>
+                            </additionalOptions>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+</project>

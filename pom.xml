@@ -1,125 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <parent>
-        <groupId>org.catools</groupId>
-        <artifactId>athena-parent</artifactId>
-        <version>1.0.0-SNAPSHOT</version>
-        <relativePath/>
-    </parent>
-
-    <artifactId>athena-client-feign</artifactId>
-
-    <name>Feign client for Athena APIs</name>
-    <description>Api Clients to work with Athena APIs</description>
+    <groupId>org.catools</groupId>
+    <artifactId>athena-feign</artifactId>
+    <version>${revision}</version>
+    <packaging>pom</packaging>
 
     <properties>
-        <feign.version>13.2</feign.version>
-        <jgit.version>6.6.1.202309021850-r</jgit.version>
-        <athena-core.version>1.0.0-SNAPSHOT</athena-core.version>
-        <junit-jupiter.version>5.10.1</junit-jupiter.version>
-
-        <mvn.repo.url>https://repo.maven.apache.org/maven2</mvn.repo.url>
-        <github.repo.url>https://maven.pkg.github.com/catools2/athena</github.repo.url>
+        <maven.deploy.skip>true</maven.deploy.skip>
     </properties>
 
-    <repositories>
-        <repository>
-            <id>central</id>
-            <url>${mvn.repo.url}</url>
-        </repository>
-        <repository>
-            <id>github</id>
-            <url>https://maven.pkg.github.com/catools2/athena</url>
-        </repository>
-    </repositories>
+    <modules>
 
-    <pluginRepositories>
-        <pluginRepository>
-            <id>central</id>
-            <url>${mvn.repo.url}</url>
-        </pluginRepository>
-    </pluginRepositories>
+        <module>athena-feign.parent</module>
+        <module>athena-core-feign-client</module>
 
-    <distributionManagement>
-        <repository>
-            <id>github</id>
-            <name>GitHub Packages</name>
-            <url>${github.repo.url}</url>
-        </repository>
-    </distributionManagement>
-
-    <dependencies>
-        <dependency>
-            <groupId>org.eclipse.jgit</groupId>
-            <artifactId>org.eclipse.jgit</artifactId>
-            <version>${jgit.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.catools</groupId>
-            <artifactId>athena-core</artifactId>
-            <version>${athena-core.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>io.swagger.core.v3</groupId>
-            <artifactId>swagger-core</artifactId>
-            <version>2.2.20</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.assertj</groupId>
-            <artifactId>assertj-core</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>com.typesafe</groupId>
-            <artifactId>config</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-slf4j2-impl</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>io.github.openfeign</groupId>
-            <artifactId>feign-okhttp</artifactId>
-            <version>${feign.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>io.github.openfeign</groupId>
-            <artifactId>feign-jackson</artifactId>
-            <version>${feign.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>io.github.openfeign</groupId>
-            <artifactId>feign-slf4j</artifactId>
-            <version>${feign.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter</artifactId>
-            <version>${junit-jupiter.version}</version>
-            <scope>test</scope>
-        </dependency>
-
-    </dependencies>
-
+    </modules>
 </project>
