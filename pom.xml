@@ -17,13 +17,24 @@
 
         <module>athena-feign.parent</module>
         <module>athena-core-feign-client</module>
+
         <module>athena-git-feign-client</module>
+        <module>athena-git-feign-cli</module>
+
         <module>athena-openapi-feign-client</module>
+        <module>athena-openapi-feign-cli</module>
+
         <module>athena-pipeline-feign-client</module>
         <module>athena-tms-feign-client</module>
+
         <module>athena-kube-feign-client</module>
+        <module>athena-kube-feign-cli</module>
+
         <module>athena-atlassian-scale-feign-client</module>
+        <module>athena-atlassian-scale-feign-cli</module>
+
         <module>athena-atlassian-jira-feign-client</module>
+        <module>athena-atlassian-jira-feign-cli</module>
 
     </modules>
 </project>
