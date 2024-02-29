@@ -43,13 +43,13 @@ jobs:
 
       - name: Build Packages
         run: |
-          mvn install -P release -DskipTests
+          mvn install -P release
 
       - name: Deploying to GitHub
         if: ${{ github.ref_type == 'tag' }}
         run: |
           mvn org.codehaus.mojo:versions-maven-plugin:2.15.0:set-property -Dproperty=revision -DnewVersion=$GITHUB_REF_NAME -q
-          mvn deploy -P release -DskipTests
+          mvn deploy -s $GITHUB_WORKSPACE/settings.xml -P release -DskipTests "-Dlogger.console.log.level=INFO"
         env:
           GITHUB_TOKEN: ${{ github.token }}
 
