@@ -60,7 +60,6 @@
 
         <argLine/>
 
-
         <!-- Repository Path -->
         <mvn.repo.url>https://repo.maven.apache.org/maven2</mvn.repo.url>
     </properties>
