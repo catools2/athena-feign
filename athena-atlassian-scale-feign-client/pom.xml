@@ -12,7 +12,7 @@
 
     <artifactId>athena-atlassian-scale-feign-client</artifactId>
 
-    <name>Atlassian scale feign client for Athena</name>
+    <name>Atlassian scale feign client for Athena test management system APIs</name>
     <description>Api Clients to read atlassian scale and load test management system data to Athena</description>
 
     <dependencies>
@@ -32,5 +32,23 @@
             <groupId>com.jayway.jsonpath</groupId>
             <artifactId>json-path</artifactId>
         </dependency>
+
+        <!-- ###################### ATLASSIAN ######################### -->
+        <dependency>
+            <groupId>com.atlassian.jira</groupId>
+            <artifactId>jira-rest-java-client-api</artifactId>
+            <version>${jira-rest-java-client-core.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.atlassian.jira</groupId>
+            <artifactId>jira-rest-java-client-core</artifactId>
+            <version>${jira-rest-java-client-core.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.atlassian.fugue</groupId>
+            <artifactId>fugue</artifactId>
+            <version>${fugue.version}</version>
+        </dependency>
+        <!-- ##################### /ATLASSIAN ######################### -->
     </dependencies>
 </project>

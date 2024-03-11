@@ -23,9 +23,10 @@
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
 
-        <athena-core.version>0.0.1</athena-core.version>
-
         <!-- ###################### CORE ######################### -->
+        <athena-core.version>0.0.2</athena-core.version>
+
+        <!-- ###################### COMMON ######################### -->
         <lombok.version>1.18.30</lombok.version>
         <junit-jupiter.version>5.10.1</junit-jupiter.version>
         <feign.version>13.2.1</feign.version>
@@ -36,8 +37,8 @@
         <jgit.version>6.8.0.202311291450-r</jgit.version>
 
         <!-- ###################### ATLASSIAN ######################### -->
-        <jira-rest-java-client-core.version>5.2.4</jira-rest-java-client-core.version>
-        <fugue.version>4.7.2</fugue.version>
+        <jira-rest-java-client-core.version>5.2.6</jira-rest-java-client-core.version>
+        <fugue.version>5.0.0</fugue.version>
 
         <!-- ###################### KUBERNETES ######################### -->
         <kubernetes.client-java.version>20.0.0-legacy</kubernetes.client-java.version>
@@ -125,7 +126,11 @@
                 <artifactId>org.eclipse.jgit</artifactId>
                 <version>${jgit.version}</version>
             </dependency>
-
+            <dependency>
+                <groupId>org.eclipse.jgit</groupId>
+                <artifactId>org.eclipse.jgit.ssh.jsch</artifactId>
+                <version>${jgit.version}</version>
+            </dependency>
             <dependency>
                 <groupId>org.hibernate.validator</groupId>
                 <artifactId>hibernate-validator</artifactId>

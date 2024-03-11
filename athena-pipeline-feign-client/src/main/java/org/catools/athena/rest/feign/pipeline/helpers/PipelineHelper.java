@@ -4,8 +4,10 @@ import feign.Response;
 import lombok.extern.slf4j.Slf4j;
 import org.catools.athena.core.model.*;
 import org.catools.athena.pipeline.model.*;
-import org.catools.athena.rest.feign.core.client.CoreClient;
-import org.catools.athena.rest.feign.pipeline.clients.ExecutionStatusClient;
+import org.catools.athena.rest.feign.core.cache.CoreCache;
+import org.catools.athena.rest.feign.core.configs.CoreConfigs;
+import org.catools.athena.rest.feign.pipeline.cache.PipelineCache;
+import org.catools.athena.rest.feign.pipeline.configs.PipelineConfigs;
 import org.catools.athena.rest.feign.pipeline.utils.PipelineUtils;
 import org.jetbrains.annotations.Nullable;
 
@@ -16,91 +18,110 @@ import java.util.*;
 @Slf4j
 public class PipelineHelper {
 
-  public static PipelineDto getPipeline(String host,
-                                        String projectCode,
-                                        String environmentCode,
-                                        String environmentName,
-                                        String pipelineName,
-                                        String pipelineNumber,
-                                        String pipelineDescription,
-                                        Set<MetadataDto> metadataDto) {
-    return Optional.ofNullable(PipelineUtils.getPipelineClient().getPipeline(pipelineName, pipelineNumber, environmentCode))
-                   .orElse(buildPipeline(host,
-                       projectCode,
-                       environmentCode,
-                       environmentName,
-                       pipelineName,
-                       pipelineNumber,
-                       pipelineDescription,
-                       metadataDto));
+  public static synchronized PipelineDto getPipeline() {
+    return PipelineHelper.getPipeline(CoreConfigs.getAthenaHost(),
+        CoreConfigs.getProject(),
+        CoreConfigs.getVersion(),
+        CoreConfigs.getEnvironment(),
+        PipelineConfigs.getPipelineName(),
+        PipelineConfigs.getPipelineNumber(),
+        PipelineConfigs.getPipelineDescription(),
+        PipelineConfigs.getPipelineMetadata());
+  }
+
+  public static synchronized PipelineDto getPipeline(final String host,
+                                                     ProjectDto project,
+                                                     VersionDto version,
+                                                     EnvironmentDto environment,
+                                                     String pipelineName,
+                                                     String pipelineNumber,
+                                                     String pipelineDescription,
+                                                     Set<MetadataDto> metadataDto) {
+    setupDependencies(host, project, version, environment);
+    return Optional.ofNullable(PipelineUtils.getPipelineClient().getPipeline(pipelineName, pipelineNumber, version.getCode(), environment.getCode()))
+                   .orElse(buildPipeline(host, project, version, environment, pipelineName, pipelineNumber, pipelineDescription, metadataDto));
   }
 
   public static PipelineDto finishPipeline(PipelineDto pipeline) {
-    return PipelineUtils.getPipelineClient().updatePipelineEndDate(pipeline.getId(), Instant.now());
+    return updatePipelineEndDate(pipeline, Instant.now());
+  }
+
+  public static PipelineDto updatePipelineEndDate(PipelineDto pipeline, Instant endDate) {
+    return PipelineUtils.getPipelineClient().updatePipelineEndDate(pipeline.getId(), endDate);
   }
 
   public static Long addScenarioExecution(PipelineScenarioExecutionDto execution) {
-    addUserIfNotExists(execution.getExecutor());
-    addStatusIfNotExists(execution.getStatus());
-
+    execution.setExecutor(getUser(execution.getExecutor()).getUsername());
+    execution.setStatus(getStatus(execution.getStatus()).getName());
     Response response = PipelineUtils.getScenarioExecutionClient().saveScenarioExecution(execution);
     return getIdFromLocation(response);
   }
 
-  public static Long addExecution(PipelineExecutionDto executionDto) {
-    addUserIfNotExists(executionDto.getExecutor());
-    addStatusIfNotExists(executionDto.getStatus());
+  public static Long addExecution(PipelineExecutionDto execution) {
+    execution.setExecutor(getUser(execution.getExecutor()).getUsername());
+    execution.setStatus(getStatus(execution.getStatus()).getName());
 
-    Response response = PipelineUtils.getExecutionClient().saveExecution(executionDto);
+    Response response = PipelineUtils.getExecutionClient().saveExecution(execution);
     return getIdFromLocation(response);
   }
 
-  public static PipelineDto buildPipeline(String host,
-                                          String projectCode,
-                                          String environmentCode,
-                                          String environmentName,
-                                          String pipelineName,
-                                          String pipelineNumber,
-                                          String pipelineDescription,
-                                          Set<MetadataDto> metadataDto) {
-    CoreClient.getEnvironment(new EnvironmentDto(environmentCode, environmentName, projectCode));
+  public static PipelineDto buildPipeline() {
+    return PipelineHelper.buildPipeline(CoreConfigs.getAthenaHost(),
+        CoreConfigs.getProject(),
+        CoreConfigs.getVersion(),
+        CoreConfigs.getEnvironment(),
+        PipelineConfigs.getPipelineName(),
+        PipelineConfigs.getPipelineNumber(),
+        PipelineConfigs.getPipelineDescription(),
+        PipelineConfigs.getPipelineMetadata());
+  }
 
+  public static synchronized PipelineDto buildPipeline(final String host,
+                                                       ProjectDto project,
+                                                       VersionDto version,
+                                                       EnvironmentDto environment,
+                                                       String pipelineName,
+                                                       String pipelineNumber,
+                                                       String pipelineDescription,
+                                                       Set<MetadataDto> metadataDto) {
+
+    setupDependencies(host, project, version, environment);
     final PipelineDto pipeline = new PipelineDto().setName(pipelineName)
                                                   .setDescription(pipelineDescription)
                                                   .setNumber(pipelineNumber)
                                                   .setStartDate(Instant.now())
-                                                  .setEnvironment(environmentCode)
+                                                  .setEnvironment(environment.getCode())
+                                                  .setVersion(version.getCode())
                                                   .setMetadata(metadataDto);
 
-    if (PipelineUtils.getPipeline(pipeline.getName(), pipeline.getNumber(), pipeline.getEnvironment()).isEmpty()) {
+    return PipelineUtils.getPipeline(pipeline.getName(), pipeline.getNumber(), pipeline.getVersion(), pipeline.getEnvironment()).orElseGet(() -> {
       Set<MetadataDto> metadata = new HashSet<>();
+
       for (MetadataDto md : pipeline.getMetadata()) {
         metadata.add(new MetadataDto().setName(md.getName()).setValue(md.getValue()));
       }
 
-      Response response = PipelineUtils.getPipelineClient()
-                                       .savePipeline(new PipelineDto().setName(pipeline.getName())
-                                                                      .setNumber(pipeline.getNumber())
-                                                                      .setEnvironment(environmentCode)
-                                                                      .setDescription(pipeline.getDescription())
-                                                                      .setStartDate(pipeline.getStartDate())
-                                                                      .setEndDate(pipeline.getEndDate())
-                                                                      .setMetadata(metadata));
+      PipelineDto pipelineToSave = new PipelineDto().setName(pipeline.getName())
+                                                    .setNumber(pipeline.getNumber())
+                                                    .setEnvironment(environment.getCode())
+                                                    .setVersion(version.getCode())
+                                                    .setDescription(pipeline.getDescription())
+                                                    .setStartDate(pipeline.getStartDate())
+                                                    .setEndDate(pipeline.getEndDate())
+                                                    .setMetadata(metadata);
+
+      Response response = PipelineUtils.getPipelineClient().savePipeline(pipelineToSave);
       pipeline.setId(getIdFromLocation(response));
-    }
-
-    return pipeline;
+      return pipeline;
+    });
   }
 
-  private synchronized static void addUserIfNotExists(String username) {
-    CoreClient.getUser(new UserDto().setUsername(username));
+  private synchronized static UserDto getUser(final String username) {
+    return CoreCache.readUser(new UserDto(username));
   }
 
-  private synchronized static void addStatusIfNotExists(String status) {
-    ExecutionStatusClient executionStatusClient = PipelineUtils.getExecutionStatusClient();
-    if (executionStatusClient.getExecutionStatus(status) == null) {
-      executionStatusClient.saveExecutionStatus(new PipelineExecutionStatusDto().setName(status));
-    }
+  private synchronized static PipelineExecutionStatusDto getStatus(final String status) {
+    return PipelineCache.readPipelineExecutionStatus(new PipelineExecutionStatusDto(status));
   }
 
   @Nullable
@@ -111,5 +132,12 @@ public class PipelineHelper {
     }
     String[] pathParts = location.get().split("/");
     return Long.valueOf(pathParts[pathParts.length - 1]);
+  }
+
+  private static void setupDependencies(String host, ProjectDto project, VersionDto version, EnvironmentDto environment) {
+    CoreConfigs.setAthenaHost(host);
+    CoreCache.readProject(project);
+    CoreCache.readVersion(version);
+    CoreCache.readEnvironment(environment);
   }
 }

@@ -5,10 +5,10 @@ import org.catools.athena.tms.model.PriorityDto;
 
 interface PriorityClient {
 
-  @RequestLine("GET /tms/priority?code={code}")
-  PriorityDto getByCode(
-      @Param("code")
-      String code);
+  @RequestLine("GET /tms/priority?keyword={keyword}")
+  PriorityDto search(
+      @Param("keyword")
+      String keyword);
 
   @RequestLine("POST /tms/priority")
   @Headers("Content-Type: application/json")

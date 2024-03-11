@@ -5,9 +5,10 @@ import com.beust.jcommander.converters.IntegerConverter;
 import com.beust.jcommander.converters.LongConverter;
 import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
-import org.catools.athena.rest.feign.common.configs.ConfigUtils;
 import org.catools.athena.rest.feign.core.configs.CoreConfigs;
 import org.catools.athena.rest.feign.kube.configs.KubeConfigs;
+
+import java.util.List;
 
 @Data
 public class Args {
@@ -18,25 +19,25 @@ public class Args {
 
   @Parameter(names = {"-pn", "-project-name"},
              description = "The unique project name to use for project identification")
-  private String projectName = ConfigUtils.getString("athena.project.name");
+  private String projectName;
 
   @Parameter(names = {"-pc", "-project-code"},
              description = "The unique project code to use for project identification")
-  private String projectCode = ConfigUtils.getString("athena.project.code");
+  private String projectCode;
 
   @Parameter(names = {"-t", "-threads"},
              converter = IntegerConverter.class,
              description = "The number of total threads to use for parallel processing.")
-  private Integer threadsCount = ConfigUtils.getInteger("athena.threads_count", 10);
+  private Integer threadsCount;
 
   @Parameter(names = {"-m", "-timeout-in-minutes"},
              converter = LongConverter.class,
              description = "The total amount of wait for sync to be finished.")
-  private Long timeoutInMinutes = ConfigUtils.getLong("athena.timeout", 600L);
+  private Long timeoutInMinutes;
 
-  @Parameter(names = {"-ns", "-namespace"},
-             description = "The namespace to read data from.")
-  private String namespace = ConfigUtils.getString("athena.kube.namespace");
+  @Parameter(names = {"-ns", "-namespaces"},
+             description = "The namespaces to read data from.")
+  private List<String> namespaces;
 
   @Parameter(names = {"-ct", "-connection-type"},
              description = "The connection type to be used for kubernetes interaction. [DEFAULT, URL, CREDENTIAL, TOKEN, CONFIG]")
@@ -76,23 +77,23 @@ public class Args {
     }
 
     if (StringUtils.isNoneBlank(projectName)) {
-      KubeConfigs.setProjectName(projectName);
+      CoreConfigs.setProjectName(projectName);
     }
 
     if (StringUtils.isNoneBlank(projectCode)) {
-      KubeConfigs.setProjectCode(projectCode);
+      CoreConfigs.setProjectCode(projectCode);
     }
 
     if (threadsCount != null) {
-      KubeConfigs.setThreadsCount(threadsCount);
+      CoreConfigs.setThreadsCount(threadsCount);
     }
 
     if (timeoutInMinutes != null) {
-      KubeConfigs.setTimeoutInMinutes(timeoutInMinutes);
+      CoreConfigs.setTimeoutInMinutes(timeoutInMinutes);
     }
 
-    if (StringUtils.isNoneBlank(namespace)) {
-      KubeConfigs.setNamespace(namespace);
+    if (namespaces != null && namespaces.isEmpty()) {
+      KubeConfigs.setNamespaces(namespaces);
     }
 
     if (StringUtils.isNoneBlank(connectionType)) {

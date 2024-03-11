@@ -5,8 +5,8 @@ import com.beust.jcommander.converters.IntegerConverter;
 import com.beust.jcommander.converters.LongConverter;
 import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
+import org.catools.athena.atlassian.etl.scale.configs.ScaleConfigs;
 import org.catools.athena.rest.feign.core.configs.CoreConfigs;
-import org.catools.atlassian.etl.scale.configs.ScaleConfigs;
 
 import java.util.List;
 
@@ -19,15 +19,19 @@ public class Args {
 
   @Parameter(names = {"-sh", "-scale-host"},
              description = "The Scale api endpoint to read information from")
-  private String jiraHost;
+  private String scaleHost;
+
+  @Parameter(names = {"-sat", "-scale-access-token"},
+             description = "The personal access token to be used for interaction with Scale api")
+  private String scaleAccessToken;
 
   @Parameter(names = {"-su", "-scale-username"},
              description = "The username to be used for interaction with Scale api")
-  private String jiraUsername;
+  private String scaleUsername;
 
   @Parameter(names = {"-sp", "-scale-password"},
              description = "The password to be used for interaction with Scale api")
-  private String jiraPassword;
+  private String scalePassword;
 
   @Parameter(names = {"-pn", "-project-name"},
              description = "The unique project name to use for project identification")
@@ -36,6 +40,16 @@ public class Args {
   @Parameter(names = {"-pc", "-project-code"},
              description = "The unique project code to use for project identification")
   private String projectCode;
+
+  @Parameter(names = {"-st", "-sync-tests"},
+             arity = 1,
+             description = "Shall sync tests or not.")
+  private Boolean syncTests;
+
+  @Parameter(names = {"-sr", "-sync-runs"},
+             arity = 1,
+             description = "Shall sync runs or not.")
+  private Boolean syncRuns;
 
   @Parameter(names = {"-s", "-start-at"},
              converter = IntegerConverter.class,
@@ -74,40 +88,52 @@ public class Args {
       CoreConfigs.setAthenaHost(athenaHost);
     }
 
-    if (StringUtils.isNoneBlank(jiraHost)) {
-      ScaleConfigs.setScaleHost(jiraHost);
+    if (StringUtils.isNoneBlank(scaleHost)) {
+      ScaleConfigs.setScaleHost(scaleHost);
     }
 
-    if (StringUtils.isNoneBlank(jiraUsername)) {
-      ScaleConfigs.setScaleUsername(jiraUsername);
+    if (syncTests != null) {
+      ScaleConfigs.setSyncTests(syncTests);
     }
 
-    if (StringUtils.isNoneBlank(jiraPassword)) {
-      ScaleConfigs.setScalePassword(jiraPassword);
+    if (syncRuns != null) {
+      ScaleConfigs.setSyncRuns(syncRuns);
+    }
+
+    if (StringUtils.isNoneBlank(scaleAccessToken)) {
+      ScaleConfigs.setScaleAccessToken(scaleAccessToken);
+    }
+
+    if (StringUtils.isNoneBlank(scaleUsername)) {
+      ScaleConfigs.setScaleUsername(scaleUsername);
+    }
+
+    if (StringUtils.isNoneBlank(scalePassword)) {
+      ScaleConfigs.setScalePassword(scalePassword);
     }
 
     if (StringUtils.isNoneBlank(projectName)) {
-      ScaleConfigs.setProjectName(projectName);
+      CoreConfigs.setProjectName(projectName);
     }
 
     if (StringUtils.isNoneBlank(projectCode)) {
-      ScaleConfigs.setProjectCode(projectCode);
+      CoreConfigs.setProjectCode(projectCode);
     }
 
     if (startAt != null) {
-      ScaleConfigs.setStartAt(startAt);
+      CoreConfigs.setStartAt(startAt);
     }
 
     if (bufferSize != null) {
-      ScaleConfigs.setBufferSize(bufferSize);
+      CoreConfigs.setBufferSize(bufferSize);
     }
 
     if (threadsCount != null) {
-      ScaleConfigs.setThreadsCount(threadsCount);
+      CoreConfigs.setThreadsCount(threadsCount);
     }
 
     if (timeoutInMinutes != null) {
-      ScaleConfigs.setTimeoutInMinutes(timeoutInMinutes);
+      CoreConfigs.setTimeoutInMinutes(timeoutInMinutes);
     }
 
     if (testCasesFoldersToSync != null) {

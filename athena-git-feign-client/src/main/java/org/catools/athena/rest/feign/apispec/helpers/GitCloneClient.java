@@ -1,12 +1,14 @@
 package org.catools.athena.rest.feign.apispec.helpers;
 
+import com.jcraft.jsch.Session;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import org.catools.athena.rest.feign.apispec.exception.GitClientException;
-import org.eclipse.jgit.api.CloneCommand;
-import org.eclipse.jgit.api.Git;
+import org.eclipse.jgit.api.*;
 import org.eclipse.jgit.api.errors.GitAPIException;
-import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
+import org.eclipse.jgit.transport.*;
+import org.eclipse.jgit.transport.ssh.jsch.JschConfigSessionFactory;
+import org.eclipse.jgit.transport.ssh.jsch.OpenSshConfig;
 
 import java.io.File;
 
@@ -21,8 +23,8 @@ public class GitCloneClient {
    * @param url  the source repository to clone
    * @return JGit client to work with
    */
-  public static Git clone(String localPath, String name, String url) {
-    return clone(localPath, name, url, Git.cloneRepository().setURI(url));
+  public static Git clone(final String localPath, String name, String url) {
+    return clone(localPath, name, url, Git.cloneRepository().setTransportConfigCallback(new SshTransportConfigCallback()).setURI(url));
   }
 
   /**
@@ -34,12 +36,12 @@ public class GitCloneClient {
    * @param password the password for the git user
    * @return JGit client to work with
    */
-  public static Git clone(String localPath, String name, String url, String username, String password) {
+  public static Git clone(final String localPath, String name, String url, String username, String password) {
     CloneCommand command = Git.cloneRepository().setURI(url).setCredentialsProvider(new UsernamePasswordCredentialsProvider(username, password));
     return clone(localPath, name, url, command);
   }
 
-  private static synchronized Git clone(String localPath, String name, String url, CloneCommand command) {
+  private static synchronized Git clone(final String localPath, String name, String url, CloneCommand command) {
     File gitDir = new File(localPath);
 
     try {
@@ -51,6 +53,22 @@ public class GitCloneClient {
     }
     finally {
       log.info("Finish cloning {} repository from {}.", name, url);
+    }
+  }
+
+  private static class SshTransportConfigCallback implements TransportConfigCallback {
+
+    private final SshSessionFactory sshSessionFactory = new JschConfigSessionFactory() {
+      @Override
+      protected void configure(OpenSshConfig.Host hc, Session session) {
+        session.setConfig("StrictHostKeyChecking", "no");
+      }
+    };
+
+    @Override
+    public void configure(Transport transport) {
+      SshTransport sshTransport = (SshTransport) transport;
+      sshTransport.setSshSessionFactory(sshSessionFactory);
     }
   }
 }

@@ -9,7 +9,7 @@ import org.jetbrains.annotations.Nullable;
 @Slf4j
 public class JsonUtils {
 
-  public static <T> T readValue(String input, Class<T> clazz) {
+  public static <T> T readValue(final String input, Class<T> clazz) {
     ObjectMapper mapper = new ObjectMapper();
     mapper.findAndRegisterModules();
     mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);

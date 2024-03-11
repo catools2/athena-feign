@@ -12,7 +12,7 @@
 
     <artifactId>athena-atlassian-jira-feign-client</artifactId>
 
-    <name>Atlassian jira feign client for Athena</name>
+    <name>Atlassian jira feign client for Athena test management system APIs</name>
     <description>Api Clients to read atlassian jira and load test management system data to Athena</description>
 
     <dependencies>
@@ -37,16 +37,19 @@
         <dependency>
             <groupId>com.atlassian.jira</groupId>
             <artifactId>jira-rest-java-client-api</artifactId>
+            <version>${jira-rest-java-client-core.version}</version>
         </dependency>
 
         <dependency>
             <groupId>com.atlassian.jira</groupId>
             <artifactId>jira-rest-java-client-core</artifactId>
+            <version>${jira-rest-java-client-core.version}</version>
         </dependency>
 
         <dependency>
             <groupId>io.atlassian.fugue</groupId>
             <artifactId>fugue</artifactId>
+            <version>${fugue.version}</version>
         </dependency>
         <!-- ##################### /ATLASSIAN ######################### -->
     </dependencies>
