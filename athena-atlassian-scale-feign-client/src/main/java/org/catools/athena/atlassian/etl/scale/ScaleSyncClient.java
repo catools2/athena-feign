@@ -71,7 +71,7 @@ public class ScaleSyncClient {
             ScaleTestRun testRun = TestRunClient.getTestRun(testRunInfoKey);
 
             Integer previousHash = TmsClient.getUniqueHashByCode(projectCode);
-            Integer currentHash = JsonUtils.buildHash(testRun);
+            Integer currentHash = testRun.hashCode();
 
             if (previousHash == null || previousHash.equals(currentHash)) {
               syncTestRunExecutions(projectCode, testRun, currentHash);
