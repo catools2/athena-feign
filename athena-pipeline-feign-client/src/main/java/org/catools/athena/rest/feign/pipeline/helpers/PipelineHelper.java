@@ -14,6 +14,8 @@ import org.jetbrains.annotations.Nullable;
 import java.time.Instant;
 import java.util.*;
 
+import static org.catools.athena.rest.feign.common.utils.FeignUtils.getEntityId;
+
 
 @Slf4j
 public class PipelineHelper {
@@ -50,19 +52,19 @@ public class PipelineHelper {
     return PipelineUtils.getPipelineClient().updatePipelineEndDate(pipeline.getId(), endDate);
   }
 
-  public static Long addScenarioExecution(PipelineScenarioExecutionDto execution) {
+  public static Optional<Long> addScenarioExecution(PipelineScenarioExecutionDto execution) {
     execution.setExecutor(getUser(execution.getExecutor()).getUsername());
     execution.setStatus(getStatus(execution.getStatus()).getName());
     Response response = PipelineUtils.getScenarioExecutionClient().saveScenarioExecution(execution);
-    return getIdFromLocation(response);
+    return getEntityId(response);
   }
 
-  public static Long addExecution(PipelineExecutionDto execution) {
+  public static Optional<Long> addExecution(PipelineExecutionDto execution) {
     execution.setExecutor(getUser(execution.getExecutor()).getUsername());
     execution.setStatus(getStatus(execution.getStatus()).getName());
 
     Response response = PipelineUtils.getExecutionClient().saveExecution(execution);
-    return getIdFromLocation(response);
+    return getEntityId(response);
   }
 
   public static PipelineDto buildPipeline() {
@@ -111,7 +113,7 @@ public class PipelineHelper {
                                                     .setMetadata(metadata);
 
       Response response = PipelineUtils.getPipelineClient().savePipeline(pipelineToSave);
-      pipeline.setId(getIdFromLocation(response));
+      getEntityId(response).map(pipeline::setId);
       return pipeline;
     });
   }
@@ -122,16 +124,6 @@ public class PipelineHelper {
 
   private synchronized static PipelineExecutionStatusDto getStatus(final String status) {
     return PipelineCache.readPipelineExecutionStatus(new PipelineExecutionStatusDto(status));
-  }
-
-  @Nullable
-  private static Long getIdFromLocation(Response response) {
-    Optional<String> location = response.headers().get("location").stream().findFirst();
-    if (location.isEmpty()) {
-      return null;
-    }
-    String[] pathParts = location.get().split("/");
-    return Long.valueOf(pathParts[pathParts.length - 1]);
   }
 
   private static void setupDependencies(String host, ProjectDto project, VersionDto version, EnvironmentDto environment) {

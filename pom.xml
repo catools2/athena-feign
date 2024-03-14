@@ -27,6 +27,7 @@
         <module>athena-pipeline-feign-client</module>
         <module>athena-pipeline-feign-testng-client</module>
 
+        <module>athena-metric-feign-client</module>
 
         <module>athena-tms-feign-client</module>
         <module>athena-atlassian-scale-feign-client</module>
