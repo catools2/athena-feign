@@ -72,6 +72,10 @@ public class TmsClient {
     return TEST_CYCLE_CLIENT.findByCode(keyword);
   }
 
+  public static Integer getUniqueHashByCode(final String keyword) {
+    return TEST_CYCLE_CLIENT.getUniqueHashByCode(keyword);
+  }
+
   public static TestCycleDto findLastTestCycleByPattern(final String name, final String versionCode) {
     return TEST_CYCLE_CLIENT.findLastByPattern(name, versionCode);
   }

@@ -10,6 +10,7 @@ import org.catools.athena.atlassian.etl.scale.rest.cycle.TestRunClient;
 import org.catools.athena.atlassian.etl.scale.rest.testcase.TestCaseClient;
 import org.catools.athena.atlassian.etl.scale.translators.ScaleTestCaseTranslator;
 import org.catools.athena.atlassian.etl.scale.translators.ScaleTestRunTranslator;
+import org.catools.athena.rest.feign.common.utils.JsonUtils;
 import org.catools.athena.rest.feign.core.cache.CoreCache;
 import org.catools.athena.rest.feign.core.configs.CoreConfigs;
 import org.catools.athena.rest.feign.tms.clients.TmsClient;
@@ -68,7 +69,13 @@ public class ScaleSyncClient {
 
             log.info("Start sync {} run.", testRunInfoKey);
             ScaleTestRun testRun = TestRunClient.getTestRun(testRunInfoKey);
-            syncTestRunExecutions(projectCode, testRun);
+
+            Integer previousHash = TmsClient.getUniqueHashByCode(projectCode);
+            Integer currentHash = JsonUtils.buildHash(testRun);
+
+            if (previousHash == null || previousHash.equals(currentHash)) {
+              syncTestRunExecutions(projectCode, testRun, currentHash);
+            }
 
             TmsClient.saveSyncInfo(projectCode, SYNC_SCALE_RUN, runDbSyncKey, projectSyncStartTime);
             log.info("Finish sync {} run.", testRunInfoKey);
@@ -84,9 +91,9 @@ public class ScaleSyncClient {
     return testcase.getUpdatedOn() != null ? testcase.getUpdatedOn().before(projectLastSync) : testcase.getCreatedOn().before(projectLastSync);
   }
 
-  private void syncTestRunExecutions(final String projectKey, ScaleTestRun testRun) {
+  private void syncTestRunExecutions(final String projectKey, ScaleTestRun testRun, Integer uniqueHash) {
     log.debug("Start updating test run {} with {} execution items.", testRun.getKey(), testRun.getItems().size());
-    TestCycleDto cycle = ScaleTestRunTranslator.translateTestRun(projectKey, testRun);
+    TestCycleDto cycle = ScaleTestRunTranslator.translateTestRun(projectKey, testRun, uniqueHash);
     TmsClient.saveTestCycle(cycle);
     log.debug("Finish updating test run {} with {} execution items.", testRun.getKey(), testRun.getItems().size());
   }

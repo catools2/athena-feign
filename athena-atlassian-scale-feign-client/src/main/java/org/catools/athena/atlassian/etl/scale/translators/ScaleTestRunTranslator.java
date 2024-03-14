@@ -1,9 +1,12 @@
 package org.catools.athena.atlassian.etl.scale.translators;
 
 import feign.FeignException;
+import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.catools.athena.atlassian.etl.scale.model.*;
+import org.catools.athena.atlassian.etl.scale.model.ScaleTestCase;
+import org.catools.athena.atlassian.etl.scale.model.ScaleTestExecution;
+import org.catools.athena.atlassian.etl.scale.model.ScaleTestRun;
 import org.catools.athena.atlassian.etl.scale.rest.testcase.TestCaseClient;
 import org.catools.athena.core.model.UserDto;
 import org.catools.athena.rest.feign.common.utils.EtlUtils;
@@ -18,8 +21,9 @@ import java.util.Objects;
 import static org.catools.athena.rest.feign.tms.helpers.EtlHelper.*;
 
 @Slf4j
+@UtilityClass
 public class ScaleTestRunTranslator {
-  public static TestCycleDto translateTestRun(final String projectKey, ScaleTestRun testRun) {
+  public static TestCycleDto translateTestRun(final String projectKey, ScaleTestRun testRun, Integer uniqueHash) {
     log.info("Start translating test run {} with {} execution items.", testRun.getKey(), testRun.getItems().size());
 
     Objects.requireNonNull(testRun);
@@ -48,6 +52,7 @@ public class ScaleTestRunTranslator {
 
     log.debug("Finish translating test run {} with {} execution items.", testRun.getKey(), testRun.getItems().size());
 
+    etlCycle.setUniqueHash(uniqueHash);
     return etlCycle;
   }
 
@@ -59,8 +64,7 @@ public class ScaleTestRunTranslator {
       try {
         ScaleTestCase testCaseItem = TestCaseClient.getTestCase(item.getTestCaseKey());
         TmsClient.saveItem(ScaleTestCaseTranslator.translateTestCase(CoreConfigs.getProjectCode(), testCaseItem));
-      }
-      catch (FeignException.NotFound t) {
+      } catch (FeignException.NotFound t) {
         createPlaceHolderForArchivedItem(projectKey, testRun, item);
       }
     }
@@ -71,14 +75,7 @@ public class ScaleTestRunTranslator {
     StatusDto status = TmsCache.readStatus(new StatusDto(EtlUtils.generateCode("Archived"), "Archived"));
     PriorityDto priority = TmsCache.readPriority(new PriorityDto(EtlUtils.generateCode("Normal"), "Normal"));
     UserDto user = CoreCache.readUser(new UserDto("robot"));
-    ItemDto itemDto = new ItemDto().setType(itemType.getCode())
-                                   .setCreatedBy(user.getUsername())
-                                   .setCreatedOn(testRun.getCreatedOn().toInstant())
-                                   .setCode(item.getTestCaseKey())
-                                   .setProject(projectKey)
-                                   .setStatus(status.getCode())
-                                   .setPriority(priority.getCode())
-                                   .setName("Place holder for archived test case " + item.getTestCaseKey());
+    ItemDto itemDto = new ItemDto().setType(itemType.getCode()).setCreatedBy(user.getUsername()).setCreatedOn(testRun.getCreatedOn().toInstant()).setCode(item.getTestCaseKey()).setProject(projectKey).setStatus(status.getCode()).setPriority(priority.getCode()).setName("Place holder for archived test case " + item.getTestCaseKey());
     TmsClient.saveItem(itemDto);
   }
 
