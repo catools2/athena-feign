@@ -8,7 +8,7 @@ public interface ExecutionStatusClient {
   @RequestLine("GET /execution_status?name={name}")
   PipelineExecutionStatusDto getExecutionStatus(
       @Param("name")
-      String username);
+      String name);
 
   @RequestLine("POST /execution_status")
   @Headers("Content-Type: application/json")

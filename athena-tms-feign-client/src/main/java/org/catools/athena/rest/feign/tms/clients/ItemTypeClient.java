@@ -5,10 +5,10 @@ import org.catools.athena.tms.model.ItemTypeDto;
 
 interface ItemTypeClient {
 
-  @RequestLine("GET /tms/itemType?code={code}")
-  ItemTypeDto getByCode(
-      @Param("code")
-      String code);
+  @RequestLine("GET /tms/itemType?keyword={keyword}")
+  ItemTypeDto search(
+      @Param("keyword")
+      String keyword);
 
   @RequestLine("POST /tms/itemType")
   @Headers("Content-Type: application/json")

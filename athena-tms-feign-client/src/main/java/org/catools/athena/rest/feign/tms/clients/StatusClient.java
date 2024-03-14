@@ -5,10 +5,10 @@ import org.catools.athena.tms.model.StatusDto;
 
 interface StatusClient {
 
-  @RequestLine("GET /tms/status?code={code}")
-  StatusDto getByCode(
-      @Param("code")
-      String code);
+  @RequestLine("GET /tms/status?keyword={keyword}")
+  StatusDto search(
+      @Param("keyword")
+      String keyword);
 
   @RequestLine("POST /tms/status")
   @Headers("Content-Type: application/json")

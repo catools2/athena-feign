@@ -5,8 +5,8 @@ import com.beust.jcommander.converters.IntegerConverter;
 import com.beust.jcommander.converters.LongConverter;
 import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
+import org.catools.athena.atlassian.etl.jira.configs.JiraConfigs;
 import org.catools.athena.rest.feign.core.configs.CoreConfigs;
-import org.catools.atlassian.etl.jira.configs.JiraConfigs;
 
 import java.util.List;
 
@@ -20,6 +20,10 @@ public class Args {
   @Parameter(names = {"-jh", "-jira-host"},
              description = "The Jira api endpoint to read information from")
   private String jiraHost;
+
+  @Parameter(names = {"-jat", "-jira-access-token"},
+             description = "The personal access token to be used for interaction with Jira api")
+  private String jiraAccessToken;
 
   @Parameter(names = {"-ju", "-jira-username"},
              description = "The username to be used for interaction with Jira api")
@@ -78,6 +82,10 @@ public class Args {
       JiraConfigs.setJiraHost(jiraHost);
     }
 
+    if (StringUtils.isNoneBlank(jiraAccessToken)) {
+      JiraConfigs.setJiraAccessToken(jiraAccessToken);
+    }
+
     if (StringUtils.isNoneBlank(jiraUsername)) {
       JiraConfigs.setJiraUsername(jiraUsername);
     }
@@ -87,27 +95,27 @@ public class Args {
     }
 
     if (StringUtils.isNoneBlank(projectName)) {
-      JiraConfigs.setProjectName(projectName);
+      CoreConfigs.setProjectName(projectName);
     }
 
     if (StringUtils.isNoneBlank(projectCode)) {
-      JiraConfigs.setProjectCode(projectCode);
+      CoreConfigs.setProjectCode(projectCode);
     }
 
     if (startAt != null) {
-      JiraConfigs.setStartAt(startAt);
+      CoreConfigs.setStartAt(startAt);
     }
 
     if (bufferSize != null) {
-      JiraConfigs.setBufferSize(bufferSize);
+      CoreConfigs.setBufferSize(bufferSize);
     }
 
     if (threadsCount != null) {
-      JiraConfigs.setThreadsCount(threadsCount);
+      CoreConfigs.setThreadsCount(threadsCount);
     }
 
     if (timeoutInMinutes != null) {
-      JiraConfigs.setTimeoutInMinutes(timeoutInMinutes);
+      CoreConfigs.setTimeoutInMinutes(timeoutInMinutes);
     }
 
     if (fieldsToRead != null) {

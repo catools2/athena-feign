@@ -7,7 +7,7 @@ import org.catools.athena.core.model.*;
 import org.catools.athena.git.model.*;
 import org.catools.athena.rest.feign.apispec.exception.GitClientException;
 import org.catools.athena.rest.feign.apispec.helpers.AthenaGitApi;
-import org.catools.athena.rest.feign.core.client.CoreClient;
+import org.catools.athena.rest.feign.core.cache.CoreCache;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.diff.*;
@@ -105,9 +105,17 @@ public class RepositoryInfo {
     readRelatedTags(commit, gitCommit);
     readMetadata(repo, commit, gitCommit);
 
+    log.info("{} persisting commit, diffs: {}, author: {}, committer: {}, tags: {}, metadata: {}.",
+        gitCommit.getHash(),
+        gitCommit.getDiffEntries().size(),
+        gitCommit.getAuthor(),
+        gitCommit.getCommitter(),
+        gitCommit.getTags().size(),
+        gitCommit.getMetadata().size());
+
     AthenaGitApi.persistCommit(gitCommit);
 
-    log.info("{} process finished, diffs: {}, author: {}, committer: {}, tags: {}, metadata: {}.",
+    log.debug("{} commit persisted, diffs: {}, author: {}, committer: {}, tags: {}, metadata: {}.",
         gitCommit.getHash(),
         gitCommit.getDiffEntries().size(),
         gitCommit.getAuthor(),
@@ -155,9 +163,7 @@ public class RepositoryInfo {
       user.setUsername(person.getEmailAddress().toLowerCase());
     }
 
-    CoreClient.getUser(user);
-
-    return user.getUsername();
+    return CoreCache.readUser(user).getUsername();
   }
 
   protected void readDiffEntries(Repository repo, RevCommit commit, CommitDto gitCommit) {

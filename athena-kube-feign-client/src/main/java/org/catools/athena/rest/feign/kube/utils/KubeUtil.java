@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.catools.athena.core.model.MetadataDto;
 import org.catools.athena.kube.model.*;
+import org.catools.athena.rest.feign.core.configs.CoreConfigs;
 import org.catools.athena.rest.feign.kube.configs.KubeConfigs;
 import org.catools.athena.rest.feign.kube.exception.KubeOperationException;
 
@@ -25,7 +26,7 @@ public class KubeUtil {
    * @return the namespace Pods
    */
   public static Set<PodDto> getNamespacePods(CoreV1Api api, String namespace) {
-    return getNamespacePods(api, namespace, null, null, null, null, null, null, null, null, null, null, null);
+    return getNamespacePods(api, namespace, null, null, null, null, null, null, null, null, null, null);
   }
 
   /**
@@ -56,8 +57,7 @@ public class KubeUtil {
                                              String resourceVersion,
                                              String resourceVersionMatch,
                                              Integer timeoutSeconds,
-                                             Boolean watch,
-                                             Boolean sendinItitalEvent) {
+                                             Boolean watch) {
     Set<PodDto> pods = new HashSet<>();
 
     try {
@@ -70,10 +70,10 @@ public class KubeUtil {
           limit,
           resourceVersion,
           resourceVersionMatch,
-          sendinItitalEvent,
+          false,
           timeoutSeconds,
           watch);
-      podList.getItems().forEach(pod -> pods.add(readPod(pod)));
+      podList.getItems().forEach(pod -> pods.add(readPod(namespace, pod)));
       return pods;
     }
     catch (ApiException e) {
@@ -87,10 +87,10 @@ public class KubeUtil {
     }
   }
 
-  private static PodDto readPod(V1Pod kubePod) {
+  private static PodDto readPod(String namespace, V1Pod kubePod) {
     PodDto pod = new PodDto();
-    pod.setProject(KubeConfigs.getProjectCode());
-    pod.setNamespace(KubeConfigs.getNamespace());
+    pod.setProject(CoreConfigs.getProjectCode());
+    pod.setNamespace(namespace);
 
     if (kubePod == null) {
       return pod;
@@ -163,7 +163,7 @@ public class KubeUtil {
     }
   }
 
-  private static Set<ContainerDto> readContainers(String type, List<V1ContainerStatus> kubeContainers) {
+  private static Set<ContainerDto> readContainers(final String type, List<V1ContainerStatus> kubeContainers) {
     Set<ContainerDto> containers = new HashSet<>();
 
     for (V1ContainerStatus status : kubeContainers) {

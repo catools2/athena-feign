@@ -17,7 +17,7 @@ public class AthenaGitApi {
   private static final RepositoryClient REPOSITORY_CLIENT = FeignUtils.getClient(RepositoryClient.class, CoreConfigs.getAthenaHost());
   private static final CommitClient COMMIT_CLIENT = FeignUtils.getClient(CommitClient.class, CoreConfigs.getAthenaHost());
 
-  public static GitRepositoryDto getRepository(String name) {
+  public static GitRepositoryDto getRepository(final String name) {
     return REPOSITORY_CLIENT.search(name);
   }
 

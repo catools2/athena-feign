@@ -5,7 +5,7 @@ import com.beust.jcommander.converters.IntegerConverter;
 import com.beust.jcommander.converters.LongConverter;
 import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
-import org.catools.athena.rest.feign.common.configs.ConfigUtils;
+import org.catools.athena.rest.feign.apispec.configs.GitConfigs;
 import org.catools.athena.rest.feign.core.configs.CoreConfigs;
 
 @Data
@@ -17,34 +17,38 @@ public class Args {
 
   @Parameter(names = {"-u", "-username"},
              description = "The username to clone repository.")
-  private String username = ConfigUtils.getString("athena.git.username");
+  private String username;
 
   @Parameter(names = {"-p", "-password"},
              password = true,
              description = "The password to clone repository.")
-  private String password = ConfigUtils.getString("athena.git.password");
+  private String password;
 
   @Parameter(names = {"-n", "-name"},
              description = "The repository name.")
-  private String name = ConfigUtils.getString("athena.git.repo_name");
+  private String name;
 
   @Parameter(names = {"-l", "-url"},
              description = "The url to the repository to clone project from.")
-  private String url = ConfigUtils.getString("athena.git.repo_url");
+  private String url;
+
+  @Parameter(names = {"-r", "-repo-info"},
+             description = "Set of repositories name and url in json format i.e. [{\"name\": \"...\",\"url\": \"...\"}]")
+  private String repoInfoSet;
 
   @Parameter(names = {"-lp", "-local-path"},
              description = "The path to the local folder where repository should be clone to.")
-  private String localPath = ConfigUtils.getString("athena.git.local_path");
+  private String localPath;
 
   @Parameter(names = {"-t", "-threads"},
              converter = IntegerConverter.class,
              description = "The number of total threads to use for parallel processing.")
-  private int threadsCount = ConfigUtils.getInteger("athena.threads_count", 10);
+  private Integer threadsCount;
 
   @Parameter(names = {"-m", "-timeout-in-minutes"},
              converter = LongConverter.class,
              description = "The total amount of wait for sync to be finished.")
-  private Long timeoutInMinutes = ConfigUtils.getLong("athena.timeout", 600L);
+  private Long timeoutInMinutes;
 
   @Parameter(names = "--help",
              help = true)
@@ -53,6 +57,30 @@ public class Args {
   public void loadConfig() {
     if (StringUtils.isNoneBlank(athenaHost)) {
       CoreConfigs.setAthenaHost(athenaHost);
+    }
+    if (threadsCount != null) {
+      CoreConfigs.setThreadsCount(threadsCount);
+    }
+    if (timeoutInMinutes != null) {
+      CoreConfigs.setTimeoutInMinutes(timeoutInMinutes);
+    }
+    if (StringUtils.isNoneBlank(username)) {
+      GitConfigs.setUsername(username);
+    }
+    if (StringUtils.isNoneBlank(password)) {
+      GitConfigs.setPassword(password);
+    }
+    if (StringUtils.isNoneBlank(name)) {
+      GitConfigs.setName(name);
+    }
+    if (StringUtils.isNoneBlank(url)) {
+      GitConfigs.setUrl(url);
+    }
+    if (StringUtils.isNoneBlank(localPath)) {
+      GitConfigs.setLocalPath(localPath);
+    }
+    if (StringUtils.isNoneBlank(repoInfoSet)) {
+      GitConfigs.setRepoInfo(repoInfoSet);
     }
   }
 

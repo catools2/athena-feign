@@ -23,25 +23,41 @@ public class TmsClient {
   private static final SyncInfoClient SYNC_INFO_CLIENT = getClient(SyncInfoClient.class, CoreConfigs.getAthenaHost());
   private static final TestCycleClient TEST_CYCLE_CLIENT = getClient(TestCycleClient.class, CoreConfigs.getAthenaHost(), 10, 900);
 
-  public static ItemTypeDto getItemType(ItemTypeDto itemTypeDto) {
-    return Optional.ofNullable(ITEM_TYPE_CLIENT.getByCode(itemTypeDto.getCode())).orElseGet(() -> {
+  public static ItemTypeDto searchOrCreateItemType(ItemTypeDto itemTypeDto) {
+    return Optional.ofNullable(search(itemTypeDto)).orElseGet(() -> {
       ITEM_TYPE_CLIENT.saveOrUpdate(itemTypeDto);
-      return ITEM_TYPE_CLIENT.getByCode(itemTypeDto.getCode());
+      return search(itemTypeDto);
     });
   }
 
-  public static StatusDto getStatus(StatusDto statusDto) {
-    return Optional.ofNullable(STATUS_CLIENT.getByCode(statusDto.getCode())).orElseGet(() -> {
+  public static StatusDto searchOrCreateStatus(StatusDto statusDto) {
+    return Optional.ofNullable(search(statusDto)).orElseGet(() -> {
       STATUS_CLIENT.saveOrUpdate(statusDto);
-      return STATUS_CLIENT.getByCode(statusDto.getCode());
+      return search(statusDto);
     });
   }
 
-  public static PriorityDto getPriority(PriorityDto priorityDto) {
-    return Optional.ofNullable(PRIORITY_CLIENT.getByCode(priorityDto.getCode())).orElseGet(() -> {
+  public static PriorityDto searchOrCreatePriority(PriorityDto priorityDto) {
+    return Optional.ofNullable(search(priorityDto)).orElseGet(() -> {
       PRIORITY_CLIENT.saveOrUpdate(priorityDto);
-      return PRIORITY_CLIENT.getByCode(priorityDto.getCode());
+      return search(priorityDto);
     });
+  }
+
+  public static Optional<ItemTypeDto> searchItemType(String keyword) {
+    return Optional.ofNullable(ITEM_TYPE_CLIENT.search(keyword));
+  }
+
+  public static Optional<StatusDto> searchStatus(String keyword) {
+    return Optional.ofNullable(STATUS_CLIENT.search(keyword));
+  }
+
+  public static Optional<PriorityDto> searchPriority(String keyword) {
+    return Optional.ofNullable(PRIORITY_CLIENT.search(keyword));
+  }
+
+  public static Optional<ItemDto> searchItem(String keyword) {
+    return Optional.ofNullable(ITEM_CLIENT.search(keyword));
   }
 
   public static void saveItem(ItemDto itemDto) {
@@ -52,12 +68,36 @@ public class TmsClient {
     TEST_CYCLE_CLIENT.saveOrUpdate(testCycleDto);
   }
 
-  public static void saveSyncInfo(String projectCode, String action, String component, Instant startTime) {
+  public static TestCycleDto findTestCycleByCode(final String keyword) {
+    return TEST_CYCLE_CLIENT.findByCode(keyword);
+  }
+
+  public static Integer getUniqueHashByCode(final String keyword) {
+    return TEST_CYCLE_CLIENT.getUniqueHashByCode(keyword);
+  }
+
+  public static TestCycleDto findLastTestCycleByPattern(final String name, final String versionCode) {
+    return TEST_CYCLE_CLIENT.findLastByPattern(name, versionCode);
+  }
+
+  public static void saveSyncInfo(final String projectCode, String action, String component, Instant startTime) {
     SYNC_INFO_CLIENT.saveOrUpdate(new SyncInfoDto(projectCode, action, component, startTime, Instant.now()));
   }
 
-  public static Date getLastSync(String projectCode, String action, String component) {
+  public static Date getLastSyncInfo(final String projectCode, String action, String component) {
     SyncInfoDto search = SYNC_INFO_CLIENT.search(action, component, projectCode);
     return search == null ? null : Date.from(search.getStartTime());
+  }
+
+  private static ItemTypeDto search(ItemTypeDto entity) {
+    return searchItemType(entity.getCode()).orElseGet(() -> searchItemType(entity.getName()).orElse(null));
+  }
+
+  private static StatusDto search(StatusDto entity) {
+    return searchStatus(entity.getCode()).orElseGet(() -> searchStatus(entity.getName()).orElse(null));
+  }
+
+  private static PriorityDto search(PriorityDto entity) {
+    return searchPriority(entity.getCode()).orElseGet(() -> searchPriority(entity.getName()).orElse(null));
   }
 }

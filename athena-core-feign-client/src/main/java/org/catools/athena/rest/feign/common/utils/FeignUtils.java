@@ -38,16 +38,25 @@ public class FeignUtils {
                                                                .target(clazz, host);
   }
 
+  public static <T> T getClient(Class<T> clazz, String host, String token) {
+    return getClient(clazz, host, token, 30, 300);
+  }
+
+  public static <T> T getClient(Class<T> clazz, String host, String token, int connectTimeout, int readTimeout) {
+    return getClientBuilder(clazz, connectTimeout, readTimeout)
+        .requestInterceptor(requestTemplate -> requestTemplate.header("Authorization", new String[] {token}))
+        .target(clazz, host);
+  }
+
   public static <T> T getClient(Class<T> clazz, String host, int connectTimeout, int readTimeout) {
     return getClientBuilder(clazz, connectTimeout, readTimeout).target(clazz, host);
   }
 
-  private static <T> Feign.Builder getClientBuilder(Class<T> clazz, int connectTimeout, int readTimeout) {
+  public static <T> Feign.Builder getClientBuilder(Class<T> clazz, int connectTimeout, int readTimeout) {
     return Feign.builder()
                 .client(new OkHttpClient())
                 .encoder(new JacksonEncoder(objectMapper()))
                 .decoder(new JacksonDecoder(objectMapper()))
-                .retryer(Retryer.NEVER_RETRY)
                 .responseInterceptor((ctx, chain) -> {
                   Response response = ctx.response();
                   if (response.status() >= 300) {

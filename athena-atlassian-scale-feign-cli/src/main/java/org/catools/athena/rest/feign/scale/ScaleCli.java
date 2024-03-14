@@ -2,10 +2,8 @@ package org.catools.athena.rest.feign.scale;
 
 import com.beust.jcommander.JCommander;
 import lombok.extern.slf4j.Slf4j;
-import org.catools.athena.core.model.ProjectDto;
-import org.catools.athena.rest.feign.core.client.CoreClient;
-import org.catools.atlassian.etl.scale.ScaleSyncClient;
-import org.catools.atlassian.etl.scale.configs.ScaleConfigs;
+import org.catools.athena.atlassian.etl.scale.ScaleSyncClient;
+import org.catools.athena.atlassian.etl.scale.configs.ScaleConfigs;
 import org.jetbrains.annotations.NotNull;
 
 @Slf4j
@@ -13,10 +11,14 @@ public class ScaleCli {
 
   public static void main(String[] args) {
     getArgs(args).loadConfig();
-    CoreClient.getProject(new ProjectDto(ScaleConfigs.getProjectCode(), ScaleConfigs.getProjectName()));
 
-    ScaleSyncClient.syncTestCases();
-    ScaleSyncClient.syncTestRuns();
+    if (ScaleConfigs.isSyncTests()) {
+      ScaleSyncClient.syncTestCases();
+    }
+
+    if (ScaleConfigs.isSyncRuns()) {
+      ScaleSyncClient.syncTestRuns();
+    }
   }
 
   @NotNull

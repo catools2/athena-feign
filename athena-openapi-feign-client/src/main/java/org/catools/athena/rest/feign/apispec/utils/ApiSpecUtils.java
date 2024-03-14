@@ -52,7 +52,7 @@ public class ApiSpecUtils {
     return savedApiPaths;
   }
 
-  public static Set<ApiPathDto> getApiPath(String url, PathItem pathItem, Long apiSpecId) {
+  public static Set<ApiPathDto> getApiPath(final String url, PathItem pathItem, Long apiSpecId) {
     Set<ApiPathDto> savedApiPaths = new HashSet<>();
 
     if (pathItem.getGet() != null) {
@@ -90,7 +90,7 @@ public class ApiSpecUtils {
     return savedApiPaths;
   }
 
-  private static ApiPathDto getApiPath(String url, String method, Operation operation, Long apiSpecId) {
+  private static ApiPathDto getApiPath(final String url, String method, Operation operation, Long apiSpecId) {
     ApiPathDto apiPath = new ApiPathDto();
 
     apiPath.setMethod(method);
@@ -110,7 +110,7 @@ public class ApiSpecUtils {
     }
 
     if (operation.getTags() != null) {
-      for (String tag : operation.getTags()) {
+      for (final String tag : operation.getTags()) {
         if (apiPath.getMetadata().stream().noneMatch(t1 -> compareApiPathTag(t1, tag))) {
           apiPath.getMetadata().add(new MetadataDto().setName(TAG_METADATA_NAME).setValue(tag));
         }

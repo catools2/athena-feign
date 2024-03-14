@@ -2,10 +2,10 @@ package org.catools.athena.rest.feign.jira;
 
 import com.beust.jcommander.JCommander;
 import lombok.extern.slf4j.Slf4j;
+import org.catools.athena.atlassian.etl.jira.JiraSyncClient;
 import org.catools.athena.core.model.ProjectDto;
-import org.catools.athena.rest.feign.core.client.CoreClient;
-import org.catools.atlassian.etl.jira.JiraSyncClient;
-import org.catools.atlassian.etl.jira.configs.JiraConfigs;
+import org.catools.athena.rest.feign.core.cache.CoreCache;
+import org.catools.athena.rest.feign.core.configs.CoreConfigs;
 import org.jetbrains.annotations.NotNull;
 
 @Slf4j
@@ -13,7 +13,6 @@ public class JiraCli {
 
   public static void main(String[] args) {
     getArgs(args).loadConfig();
-    CoreClient.getProject(new ProjectDto(JiraConfigs.getProjectCode(), JiraConfigs.getProjectName()));
     JiraSyncClient.syncJira();
   }
 

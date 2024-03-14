@@ -3,6 +3,7 @@ package org.catools.athena.rest.feign.pipeline.utils;
 import feign.FeignException;
 import lombok.experimental.UtilityClass;
 import org.catools.athena.pipeline.model.PipelineDto;
+import org.catools.athena.pipeline.model.PipelineExecutionStatusDto;
 import org.catools.athena.rest.feign.core.configs.CoreConfigs;
 import org.catools.athena.rest.feign.pipeline.clients.*;
 
@@ -12,11 +13,17 @@ import static org.catools.athena.rest.feign.common.utils.FeignUtils.getClient;
 
 @UtilityClass
 public class PipelineUtils {
+  private static final ExecutionStatusClient EXECUTION_STATUS_CLIENT = getClient(ExecutionStatusClient.class, CoreConfigs.getAthenaHost());
 
-  public static Optional<PipelineDto> getPipeline(final String pipelineName, final String pipelineNumber, final String environmentCode) {
+
+  public static Optional<PipelineDto> getPipeline(final String pipelineName,
+                                                  final String pipelineNumber,
+                                                  final String versionCode,
+                                                  final String environmentCode) {
     try {
       return Optional.ofNullable(getClient(PipelineClient.class, CoreConfigs.getAthenaHost()).getPipeline(pipelineName,
           pipelineNumber,
+          versionCode,
           environmentCode));
     }
     catch (FeignException.NotFound ex) {
@@ -24,9 +31,13 @@ public class PipelineUtils {
     }
   }
 
-  public static ExecutionStatusClient getExecutionStatusClient() {
-    return getClient(ExecutionStatusClient.class, CoreConfigs.getAthenaHost());
+  public static PipelineExecutionStatusDto getExecutionStatus(PipelineExecutionStatusDto executionStatusDto) {
+    return Optional.ofNullable(EXECUTION_STATUS_CLIENT.getExecutionStatus(executionStatusDto.getName())).orElseGet(() -> {
+      EXECUTION_STATUS_CLIENT.saveExecutionStatus(executionStatusDto);
+      return EXECUTION_STATUS_CLIENT.getExecutionStatus(executionStatusDto.getName());
+    });
   }
+
 
   public static PipelineClient getPipelineClient() {
     return getClient(PipelineClient.class, CoreConfigs.getAthenaHost());

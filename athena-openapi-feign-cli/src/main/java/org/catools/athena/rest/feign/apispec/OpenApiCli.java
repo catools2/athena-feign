@@ -2,9 +2,7 @@ package org.catools.athena.rest.feign.apispec;
 
 import com.beust.jcommander.JCommander;
 import lombok.extern.slf4j.Slf4j;
-import org.catools.athena.core.model.ProjectDto;
 import org.catools.athena.rest.feign.apispec.helpers.ApiSpecLoader;
-import org.catools.athena.rest.feign.core.client.CoreClient;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -17,8 +15,7 @@ public class OpenApiCli {
     Args args = getArgs(argc);
     args.loadConfig();
 
-    CoreClient.getProject(new ProjectDto(args.getProjectCode(), args.getProjectName()));
-    ApiSpecLoader.saveOpenApi(args.getName(), args.getUrl(), args.getProjectCode());
+    ApiSpecLoader.saveOpenApi();
   }
 
   @NotNull

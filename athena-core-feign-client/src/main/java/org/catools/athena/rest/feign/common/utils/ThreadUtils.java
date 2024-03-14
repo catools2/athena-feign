@@ -17,7 +17,7 @@ public class ThreadUtils {
     }
   }
 
-  public static void executeInParallel(int threadsCount, long timeout, Supplier<Boolean> command) {
+  public static void executeInParallel(int threadsCount, long timeoutInMinutes, Supplier<Boolean> command) {
     AtomicReference<Throwable> hasError = new AtomicReference<>();
     ExecutorService executor = Executors.newFixedThreadPool(threadsCount);
     try {
@@ -28,6 +28,7 @@ public class ThreadUtils {
           }
           catch (Throwable t) {
             hasError.set(t);
+            throw t;
           }
         });
       }
@@ -37,7 +38,7 @@ public class ThreadUtils {
     }
 
     try {
-      if (!executor.awaitTermination(timeout, TimeUnit.MINUTES)) {
+      if (!executor.awaitTermination(timeoutInMinutes, TimeUnit.MINUTES)) {
         throw new RuntimeException("Failed to terminate worker");
       }
     }

@@ -6,20 +6,22 @@ import org.catools.athena.pipeline.model.PipelineDto;
 import java.time.Instant;
 
 public interface PipelineClient {
-  @RequestLine("GET /pipeline?name={name}&number={number}&envCode={envCode}")
+  @RequestLine("GET /pipeline?name={name}&number={number}&versionCode={versionCode}&envCode={envCode}")
   PipelineDto getPipeline(
       @Param("name")
       String pipelineName,
       @Param("number")
       String pipelineNumber,
+      @Param("versionCode")
+      String versionCode,
       @Param("envCode")
       String environmentCode);
 
-  @RequestLine("PATCH /pipeline?pipelineId={pipelineId}&endDate={date}")
+  @RequestLine("PATCH /pipeline?pipelineId={pipelineId}&date={date}")
   PipelineDto updatePipelineEndDate(
       @Param("pipelineId")
       Long pipelineId,
-      @Param("endDate")
+      @Param("date")
       Instant instant);
 
   @RequestLine("POST /pipeline")

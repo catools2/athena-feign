@@ -6,6 +6,8 @@ import lombok.experimental.UtilityClass;
 import org.catools.athena.rest.feign.common.configs.ConfigUtils;
 import org.catools.athena.rest.feign.kube.enums.KubeConnectionType;
 
+import java.util.List;
+
 /**
  * Kubernetes' configuration including connection parameters.
  */
@@ -14,23 +16,7 @@ public class KubeConfigs {
 
   @Setter
   @Getter
-  private static String projectName = ConfigUtils.getString("athena.project.name");
-
-  @Setter
-  @Getter
-  private static String projectCode = ConfigUtils.getString("athena.project.code");
-
-  @Setter
-  @Getter
-  private static Integer threadsCount = ConfigUtils.getInteger("athena.threads_count", 10);
-
-  @Setter
-  @Getter
-  private static Long timeoutInMinutes = ConfigUtils.getLong("athena.timeout", 600L);
-
-  @Setter
-  @Getter
-  private static String namespace = ConfigUtils.getString("athena.kube.namespace");
+  private static List<String> namespaces = ConfigUtils.getStrings("athena.kube.namespaces");
 
   @Setter
   @Getter
