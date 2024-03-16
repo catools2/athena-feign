@@ -11,7 +11,9 @@ import org.catools.athena.atlassian.etl.scale.rest.cycle.ScaleExecutionStatus;
 import org.catools.athena.atlassian.etl.scale.utils.CustomDateDeserializer;
 import org.catools.athena.atlassian.etl.scale.utils.CustomDateSerializer;
 
-import java.util.*;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
 
 @Data
 @NoArgsConstructor
@@ -49,6 +51,5 @@ public class ScaleTestResult {
 
   private HashMap<String, String> customFields;
   private HashSet<ScaleScriptResult> scriptResults;
-
 
 }

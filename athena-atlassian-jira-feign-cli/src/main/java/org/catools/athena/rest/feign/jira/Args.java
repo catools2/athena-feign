@@ -14,63 +14,63 @@ import java.util.List;
 public class Args {
 
   @Parameter(names = {"-ah", "-athena-host"},
-             description = "The Athena api endpoint to send information to")
+      description = "The Athena api endpoint to send information to")
   private String athenaHost;
 
   @Parameter(names = {"-jh", "-jira-host"},
-             description = "The Jira api endpoint to read information from")
+      description = "The Jira api endpoint to read information from")
   private String jiraHost;
 
   @Parameter(names = {"-jat", "-jira-access-token"},
-             description = "The personal access token to be used for interaction with Jira api")
+      description = "The personal access token to be used for interaction with Jira api")
   private String jiraAccessToken;
 
   @Parameter(names = {"-ju", "-jira-username"},
-             description = "The username to be used for interaction with Jira api")
+      description = "The username to be used for interaction with Jira api")
   private String jiraUsername;
 
   @Parameter(names = {"-jp", "-jira-password"},
-             description = "The password to be used for interaction with Jira api")
+      description = "The password to be used for interaction with Jira api")
   private String jiraPassword;
 
   @Parameter(names = {"-pn", "-project-name"},
-             description = "The unique project name to use for project identification")
+      description = "The unique project name to use for project identification")
   private String projectName;
 
   @Parameter(names = {"-pc", "-project-code"},
-             description = "The unique project code to use for project identification")
+      description = "The unique project code to use for project identification")
   private String projectCode;
 
   @Parameter(names = {"-i", "-issue-type"},
-             description = "The issue type to sync")
+      description = "The issue type to sync")
   private List<String> issueTypes;
 
   @Parameter(names = {"-f", "-fields_to_sync"},
-             description = "The list of Jira fields to read during sync.")
+      description = "The list of Jira fields to read during sync.")
   private List<String> fieldsToRead;
 
   @Parameter(names = {"-s", "-start-at"},
-             converter = IntegerConverter.class,
-             description = "The index to start query data from Jira.")
+      converter = IntegerConverter.class,
+      description = "The index to start query data from Jira.")
   private Integer startAt;
 
   @Parameter(names = {"-b", "-buffer-size"},
-             converter = IntegerConverter.class,
-             description = "The buffer size to define maximum number of return value in each Jira call.")
+      converter = IntegerConverter.class,
+      description = "The buffer size to define maximum number of return value in each Jira call.")
   private Integer bufferSize;
 
   @Parameter(names = {"-t", "-threads"},
-             converter = IntegerConverter.class,
-             description = "The number of total threads to use for parallel processing.")
+      converter = IntegerConverter.class,
+      description = "The number of total threads to use for parallel processing.")
   private Integer threadsCount;
 
   @Parameter(names = {"-m", "-timeout-in-minutes"},
-             converter = LongConverter.class,
-             description = "The total amount of wait for sync to be finished.")
+      converter = LongConverter.class,
+      description = "The total amount of wait for sync to be finished.")
   private Long timeoutInMinutes;
 
   @Parameter(names = "--help",
-             help = true)
+      help = true)
   private boolean help = false;
 
   public void loadConfig() {

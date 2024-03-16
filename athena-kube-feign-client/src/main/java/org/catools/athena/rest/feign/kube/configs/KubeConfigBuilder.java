@@ -61,8 +61,7 @@ public class KubeConfigBuilder {
   private static ApiClient fromConfig() {
     try {
       return Config.fromConfig(KubeConfigs.getKubeConfigPath());
-    }
-    catch (IOException e) {
+    } catch (IOException e) {
       throw new KubeOperationException("Failed to build client using the provided configuration file. configFile:" + KubeConfigs.getKubeConfigPath(),
           e);
     }
@@ -71,8 +70,7 @@ public class KubeConfigBuilder {
   private static ApiClient fromDefaultClient() {
     try {
       return Config.defaultClient();
-    }
-    catch (IOException e) {
+    } catch (IOException e) {
       throw new KubeOperationException("Failed to build client using the default kubeconfig file.", e);
     }
   }

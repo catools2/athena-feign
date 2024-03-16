@@ -1,6 +1,8 @@
 package org.catools.athena.rest.feign.metrics.clients;
 
-import feign.*;
+import feign.Headers;
+import feign.RequestLine;
+import feign.Response;
 import org.catools.athena.metrics.model.MetricDto;
 
 public interface MetricClient {

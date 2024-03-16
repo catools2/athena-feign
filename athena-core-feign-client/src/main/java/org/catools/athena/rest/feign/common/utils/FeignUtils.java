@@ -35,7 +35,7 @@ public class FeignUtils {
 
   public static <T> T getClient(Class<T> clazz, String host, String username, String password, int connectTimeout, int readTimeout) {
     return getClientBuilder(clazz, connectTimeout, readTimeout).requestInterceptor(new BasicAuthRequestInterceptor(username, password))
-                                                               .target(clazz, host);
+        .target(clazz, host);
   }
 
   public static <T> T getClient(Class<T> clazz, String host, String token) {
@@ -44,7 +44,9 @@ public class FeignUtils {
 
   public static <T> T getClient(Class<T> clazz, String host, String token, int connectTimeout, int readTimeout) {
     return getClientBuilder(clazz, connectTimeout, readTimeout)
-        .requestInterceptor(requestTemplate -> requestTemplate.header("Authorization", new String[] {token}))
+        .requestInterceptor(requestTemplate -> {
+          requestTemplate.header("Authorization", "Bearer " + token);
+        })
         .target(clazz, host);
   }
 
@@ -54,27 +56,26 @@ public class FeignUtils {
 
   public static <T> Feign.Builder getClientBuilder(Class<T> clazz, int connectTimeout, int readTimeout) {
     return Feign.builder()
-                .client(new OkHttpClient())
-                .encoder(new JacksonEncoder(objectMapper()))
-                .decoder(new JacksonDecoder(objectMapper()))
-                .responseInterceptor((ctx, chain) -> {
-                  Response response = ctx.response();
-                  if (response.status() >= 300) {
-                    throw FeignException.errorStatus(response.request().httpMethod().name(), response);
-                  }
-                  return chain.next(ctx);
-                })
-                .logger(new Slf4jLogger(clazz))
-                .logLevel(Logger.Level.NONE)
-                .options(new Request.Options(connectTimeout, TimeUnit.SECONDS, readTimeout, TimeUnit.SECONDS, true));
+        .client(new OkHttpClient())
+        .encoder(new JacksonEncoder(objectMapper()))
+        .decoder(new JacksonDecoder(objectMapper()))
+        .responseInterceptor((ctx, chain) -> {
+          Response response = ctx.response();
+          if (response.status() >= 300) {
+            throw FeignException.errorStatus(response.request().httpMethod().name(), response);
+          }
+          return chain.next(ctx);
+        })
+        .logger(new Slf4jLogger(clazz))
+        .logLevel(Logger.Level.NONE)
+        .options(new Request.Options(connectTimeout, TimeUnit.SECONDS, readTimeout, TimeUnit.SECONDS, true));
   }
 
   @NotNull
   public static Optional<Long> getEntityId(Response response) {
     try {
       return response.headers().get(ENTITY_ID).stream().findFirst().map(Long::valueOf);
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
       log.error("failed to process request: {}\nresponse: {}", response.request().toString(), response);
       throw e;
     }

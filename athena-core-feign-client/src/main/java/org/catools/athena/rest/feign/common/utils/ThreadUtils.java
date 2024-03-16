@@ -2,7 +2,9 @@ package org.catools.athena.rest.feign.common.utils;
 
 import lombok.experimental.UtilityClass;
 
-import java.util.concurrent.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Supplier;
 
@@ -12,8 +14,7 @@ public class ThreadUtils {
   public static void sleep(long milliseconds) {
     try {
       Thread.sleep(milliseconds);
-    }
-    catch (InterruptedException ignored) {
+    } catch (InterruptedException ignored) {
     }
   }
 
@@ -25,15 +26,13 @@ public class ThreadUtils {
         executor.execute(() -> {
           try {
             command.get();
-          }
-          catch (Throwable t) {
+          } catch (Throwable t) {
             hasError.set(t);
             throw t;
           }
         });
       }
-    }
-    finally {
+    } finally {
       executor.shutdown();
     }
 
@@ -41,8 +40,7 @@ public class ThreadUtils {
       if (!executor.awaitTermination(timeoutInMinutes, TimeUnit.MINUTES)) {
         throw new RuntimeException("Failed to terminate worker");
       }
-    }
-    catch (InterruptedException e) {
+    } catch (InterruptedException e) {
       throw new RuntimeException("Failed to terminate worker", e);
     }
 

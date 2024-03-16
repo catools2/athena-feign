@@ -10,7 +10,9 @@ import lombok.experimental.Accessors;
 import org.catools.athena.atlassian.etl.scale.utils.CustomDateDeserializer;
 import org.catools.athena.atlassian.etl.scale.utils.CustomDateSerializer;
 
-import java.util.*;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
 
 @Data
 @NoArgsConstructor
@@ -57,4 +59,5 @@ public class ScaleTestRun {
 
   private HashMap<String, Integer> executionSummary;
   private HashSet<ScaleTestExecution> items;
+
 }

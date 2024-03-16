@@ -66,8 +66,7 @@ public class AthenaSearchRestClient extends AsynchronousSearchRestClient {
     final String notNullJql = StringUtils.defaultString(jql);
     if (notNullJql.length() > MAX_JQL_LENGTH_FOR_HTTP_GET) {
       return postJql(maxResults, startAt, expandosValues, notNullJql, fields);
-    }
-    else {
+    } else {
       return getJql(maxResults, startAt, expandosValues, notNullJql, fields);
     }
   }
@@ -82,8 +81,8 @@ public class AthenaSearchRestClient extends AsynchronousSearchRestClient {
       @Nullable
       Set<String> fields) {
     final UriBuilder uriBuilder = UriBuilder.fromUri(searchUri)
-                                            .queryParam(JQL_ATTRIBUTE, jql)
-                                            .queryParam(EXPAND_ATTRIBUTE, Joiner.on(",").join(expandosValues));
+        .queryParam(JQL_ATTRIBUTE, jql)
+        .queryParam(EXPAND_ATTRIBUTE, Joiner.on(",").join(expandosValues));
 
     if (fields != null) {
       uriBuilder.queryParam(FIELDS_ATTRIBUTE, Joiner.on(",").join(fields));
@@ -113,15 +112,14 @@ public class AthenaSearchRestClient extends AsynchronousSearchRestClient {
 
     try {
       postEntity.put(JQL_ATTRIBUTE, jql)
-                .put(EXPAND_ATTRIBUTE, ImmutableList.copyOf(expandosValues))
-                .putOpt(START_AT_ATTRIBUTE, startAt)
-                .putOpt(MAX_RESULTS_ATTRIBUTE, maxResults);
+          .put(EXPAND_ATTRIBUTE, ImmutableList.copyOf(expandosValues))
+          .putOpt(START_AT_ATTRIBUTE, startAt)
+          .putOpt(MAX_RESULTS_ATTRIBUTE, maxResults);
 
       if (fields != null) {
         postEntity.put(FIELDS_ATTRIBUTE, fields); // putOpt doesn't work with collections
       }
-    }
-    catch (JSONException e) {
+    } catch (JSONException e) {
       throw new RestClientException(e);
     }
     return postAndParse(searchUri, postEntity, searchResultJsonParser);

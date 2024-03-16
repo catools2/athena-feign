@@ -1,21 +1,34 @@
 package org.catools.athena.rest.feign.apispec.model;
 
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Data;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
-import org.catools.athena.core.model.*;
-import org.catools.athena.git.model.*;
+import org.catools.athena.core.model.MetadataDto;
+import org.catools.athena.core.model.UserAliasDto;
+import org.catools.athena.core.model.UserDto;
+import org.catools.athena.git.model.CommitDto;
+import org.catools.athena.git.model.DiffEntryDto;
+import org.catools.athena.git.model.GitRepositoryDto;
+import org.catools.athena.git.model.TagDto;
 import org.catools.athena.rest.feign.apispec.exception.GitClientException;
 import org.catools.athena.rest.feign.apispec.helpers.AthenaGitApi;
 import org.catools.athena.rest.feign.core.cache.CoreCache;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.diff.*;
-import org.eclipse.jgit.lib.*;
+import org.eclipse.jgit.lib.ObjectId;
+import org.eclipse.jgit.lib.PersonIdent;
+import org.eclipse.jgit.lib.Ref;
+import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.eclipse.jgit.revwalk.filter.CommitTimeRevFilter;
 import org.eclipse.jgit.revwalk.filter.RevFilter;
-import org.eclipse.jgit.treewalk.*;
+import org.eclipse.jgit.treewalk.AbstractTreeIterator;
+import org.eclipse.jgit.treewalk.CanonicalTreeParser;
+import org.eclipse.jgit.treewalk.EmptyTreeIterator;
 import org.eclipse.jgit.util.StringUtils;
 import org.eclipse.jgit.util.io.NullOutputStream;
 
@@ -65,8 +78,7 @@ public class RepositoryInfo {
     Iterator<RevCommit> commits;
     try {
       commits = git.log().setRevFilter(filter).all().call().iterator();
-    }
-    catch (GitAPIException | IOException e) {
+    } catch (GitAPIException | IOException e) {
       throw new GitClientException("Failed to read commits from repository", e);
     }
 
@@ -142,8 +154,7 @@ public class RepositoryInfo {
 
         gitCommit.getTags().add(tag);
       }
-    }
-    catch (GitAPIException | IOException e) {
+    } catch (GitAPIException | IOException e) {
       throw new GitClientException("Failed to read tags for commit", e);
     }
   }
@@ -158,8 +169,7 @@ public class RepositoryInfo {
         user.getAliases().add(new UserAliasDto().setAlias(person.getEmailAddress().toLowerCase()));
       }
 
-    }
-    else if (!StringUtils.isEmptyOrNull(person.getEmailAddress())) {
+    } else if (!StringUtils.isEmptyOrNull(person.getEmailAddress())) {
       user.setUsername(person.getEmailAddress().toLowerCase());
     }
 
@@ -171,8 +181,7 @@ public class RepositoryInfo {
 
     if (commit.getParentCount() == 0) {
       readCommitDiff(repo, commit, null, gitCommit.getDiffEntries());
-    }
-    else {
+    } else {
       readCommitDiff(repo, commit, commit.getParent(0), gitCommit.getDiffEntries());
     }
   }
@@ -192,8 +201,7 @@ public class RepositoryInfo {
       for (DiffEntry entry : entries) {
         readDiffEntry(entry, diffFormatter, diffEntries);
       }
-    }
-    catch (IOException e) {
+    } catch (IOException e) {
       throw new GitClientException("Failed to read diff entries.", e);
     }
   }
@@ -212,8 +220,7 @@ public class RepositoryInfo {
         gitFileChange.setDeleted(gitFileChange.getDeleted() + edit.getLengthA());
         gitFileChange.setInserted(gitFileChange.getInserted() + edit.getLengthB());
       }
-    }
-    catch (IOException e) {
+    } catch (IOException e) {
       throw new GitClientException("Failed to get edit list from commit.", e);
     }
 
@@ -227,8 +234,7 @@ public class RepositoryInfo {
       formatter.format(diff);
 
       return out.toString();
-    }
-    catch (IOException e) {
+    } catch (IOException e) {
       throw new GitClientException("Failed to read content diff.", e);
     }
   }
@@ -242,8 +248,7 @@ public class RepositoryInfo {
       CanonicalTreeParser parentTree = new CanonicalTreeParser();
       parentTree.reset(repo.newObjectReader(), commit.getTree());
       return parentTree;
-    }
-    catch (IOException e) {
+    } catch (IOException e) {
       throw new GitClientException("Failed to parse commit.", e);
     }
   }

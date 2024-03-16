@@ -24,7 +24,7 @@
         <maven.compiler.target>${java.version}</maven.compiler.target>
 
         <!-- ###################### CORE ######################### -->
-        <athena-core.version>0.0.3</athena-core.version>
+        <athena-core.version>0.0.4</athena-core.version>
 
         <!-- ###################### COMMON ######################### -->
         <lombok.version>1.18.30</lombok.version>
@@ -32,6 +32,10 @@
         <feign.version>13.2.1</feign.version>
         <slf4j-api.version>2.1.0-alpha1</slf4j-api.version>
         <log4j-slf4j2-impl.version>3.0.0-beta2</log4j-slf4j2-impl.version>
+        <swagger-core.version>2.2.20</swagger-core.version>
+        <jcommander.version>1.82</jcommander.version>
+        <guava.version>33.1.0-jre</guava.version>
+        <failsafe.version>3.3.2</failsafe.version>
 
         <!-- ###################### GIT ######################### -->
         <jgit.version>6.8.0.202311291450-r</jgit.version>
@@ -39,6 +43,7 @@
         <!-- ###################### ATLASSIAN ######################### -->
         <jira-rest-java-client-core.version>5.2.6</jira-rest-java-client-core.version>
         <fugue.version>5.0.0</fugue.version>
+        <json-path.version>2.9.0</json-path.version>
 
         <!-- ###################### KUBERNETES ######################### -->
         <kubernetes.client-java.version>20.0.0-legacy</kubernetes.client-java.version>
@@ -126,11 +131,13 @@
                 <artifactId>org.eclipse.jgit</artifactId>
                 <version>${jgit.version}</version>
             </dependency>
+
             <dependency>
                 <groupId>org.eclipse.jgit</groupId>
                 <artifactId>org.eclipse.jgit.ssh.jsch</artifactId>
                 <version>${jgit.version}</version>
             </dependency>
+
             <dependency>
                 <groupId>org.hibernate.validator</groupId>
                 <artifactId>hibernate-validator</artifactId>
@@ -140,25 +147,31 @@
             <dependency>
                 <groupId>io.swagger.core.v3</groupId>
                 <artifactId>swagger-core</artifactId>
-                <version>2.2.20</version>
+                <version>${swagger-core.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>com.beust</groupId>
                 <artifactId>jcommander</artifactId>
-                <version>1.82</version>
+                <version>${jcommander.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>com.jayway.jsonpath</groupId>
                 <artifactId>json-path</artifactId>
-                <version>2.9.0</version>
+                <version>${json-path.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.google.guava</groupId>
+                <artifactId>guava</artifactId>
+                <version>${guava.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>dev.failsafe</groupId>
                 <artifactId>failsafe</artifactId>
-                <version>3.3.2</version>
+                <version>${failsafe.version}</version>
             </dependency>
 
             <!-- ##################### k8s        ######################### -->

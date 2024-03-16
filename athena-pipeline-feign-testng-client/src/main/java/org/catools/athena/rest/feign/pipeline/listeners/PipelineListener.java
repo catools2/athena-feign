@@ -115,8 +115,7 @@ public class PipelineListener
   protected void setStartTime(ITestNGMethod method) {
     if (method.isBeforeClassConfiguration()) {
       beforeClassStartTime = Instant.now();
-    }
-    else if (method.isBeforeMethodConfiguration()) {
+    } else if (method.isBeforeMethodConfiguration()) {
       beforeMethodStartTime = Instant.now();
     }
   }
@@ -125,8 +124,7 @@ public class PipelineListener
     ITestNGMethod method = testResult.getMethod();
     if (method.isBeforeClassConfiguration()) {
       beforeClassEndTime = Instant.now();
-    }
-    else if (method.isBeforeMethodConfiguration()) {
+    } else if (method.isBeforeMethodConfiguration()) {
       beforeMethodEndTime = Instant.now();
     }
   }

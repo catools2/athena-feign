@@ -1,6 +1,9 @@
 package org.catools.athena.rest.feign.core.cache;
 
-import org.catools.athena.core.model.*;
+import org.catools.athena.core.model.EnvironmentDto;
+import org.catools.athena.core.model.ProjectDto;
+import org.catools.athena.core.model.UserDto;
+import org.catools.athena.core.model.VersionDto;
 import org.catools.athena.rest.feign.common.cache.CacheStorage;
 import org.catools.athena.rest.feign.core.client.CoreClient;
 

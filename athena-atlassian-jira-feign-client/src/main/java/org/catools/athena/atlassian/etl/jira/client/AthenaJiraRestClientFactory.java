@@ -1,9 +1,13 @@
 package org.catools.athena.atlassian.etl.jira.client;
 
 import com.atlassian.httpclient.api.HttpClient;
-import com.atlassian.jira.rest.client.api.*;
+import com.atlassian.jira.rest.client.api.AuthenticationHandler;
+import com.atlassian.jira.rest.client.api.JiraRestClient;
+import com.atlassian.jira.rest.client.api.JiraRestClientFactory;
 import com.atlassian.jira.rest.client.auth.BasicHttpAuthenticationHandler;
-import com.atlassian.jira.rest.client.internal.async.*;
+import com.atlassian.jira.rest.client.internal.async.AsynchronousHttpClientFactory;
+import com.atlassian.jira.rest.client.internal.async.AsynchronousJiraRestClientFactory;
+import com.atlassian.jira.rest.client.internal.async.DisposableHttpClient;
 
 import java.net.URI;
 import java.util.concurrent.TimeUnit;

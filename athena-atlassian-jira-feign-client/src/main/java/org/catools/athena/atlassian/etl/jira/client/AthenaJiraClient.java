@@ -1,7 +1,5 @@
 package org.catools.athena.atlassian.etl.jira.client;
 
-import com.atlassian.httpclient.api.Request;
-import com.atlassian.jira.rest.client.api.AuthenticationHandler;
 import com.atlassian.jira.rest.client.api.JiraRestClient;
 import com.atlassian.jira.rest.client.api.domain.Issue;
 import dev.failsafe.Failsafe;
@@ -15,7 +13,9 @@ import org.catools.athena.rest.feign.core.configs.CoreConfigs;
 
 import java.net.URI;
 import java.time.Duration;
-import java.util.*;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;

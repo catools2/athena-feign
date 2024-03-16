@@ -7,12 +7,15 @@ import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.catools.athena.core.model.MetadataDto;
-import org.catools.athena.kube.model.*;
+import org.catools.athena.kube.model.ContainerDto;
+import org.catools.athena.kube.model.PodDto;
+import org.catools.athena.kube.model.PodStatusDto;
 import org.catools.athena.rest.feign.core.configs.CoreConfigs;
-import org.catools.athena.rest.feign.kube.configs.KubeConfigs;
 import org.catools.athena.rest.feign.kube.exception.KubeOperationException;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @Slf4j
 @UtilityClass
@@ -75,8 +78,7 @@ public class KubeUtil {
           watch);
       podList.getItems().forEach(pod -> pods.add(readPod(namespace, pod)));
       return pods;
-    }
-    catch (ApiException e) {
+    } catch (ApiException e) {
       throw new KubeOperationException(String.format(
           "Failed to read namespace pods. namespace : '%s', fieldSelector: '%s', labelSelector: '%s', resourceVersion: '%s', resourceVersionMatch: '%s'",
           namespace,

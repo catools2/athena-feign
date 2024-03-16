@@ -1,6 +1,8 @@
 package org.catools.athena.rest.feign.pipeline.clients;
 
-import feign.*;
+import feign.Headers;
+import feign.RequestLine;
+import feign.Response;
 import org.catools.athena.pipeline.model.PipelineExecutionDto;
 
 public interface ExecutionClient {

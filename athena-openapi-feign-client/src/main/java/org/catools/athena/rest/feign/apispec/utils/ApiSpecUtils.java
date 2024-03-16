@@ -1,6 +1,8 @@
 package org.catools.athena.rest.feign.apispec.utils;
 
-import io.swagger.v3.oas.models.*;
+import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.Operation;
+import io.swagger.v3.oas.models.PathItem;
 import io.swagger.v3.oas.models.parameters.Parameter;
 import io.swagger.v3.oas.models.tags.Tag;
 import lombok.experimental.UtilityClass;
@@ -29,8 +31,7 @@ public class ApiSpecUtils {
 
     if (openAPI.getTags() == null) {
       apiSpecToSave.getMetadata().removeIf(m -> TAG_METADATA_NAME.equals(m.getName()));
-    }
-    else {
+    } else {
       // remove relationship for all values which are in DB but not in model to save
       apiSpecToSave.getMetadata().removeIf(t1 -> openAPI.getTags().stream().noneMatch(t2 -> compareApiSpecTag(t1, t2)));
       // Add new tags if not already exists

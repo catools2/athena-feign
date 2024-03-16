@@ -21,8 +21,7 @@ public class CustomDateSerializer extends StdSerializer<Date> {
   public void serialize(Date date, JsonGenerator jsonGenerator, SerializerProvider serializerProvider) {
     try {
       jsonGenerator.writeString(DateFormatUtils.format(date, "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"));
-    }
-    catch (Throwable t) {
+    } catch (Throwable t) {
       throw new RuntimeException(String.format("cannot convert %s to date", date), t);
     }
   }

@@ -104,7 +104,7 @@ public class ConfigUtils {
     return StringUtils.isBlank(prop) ? defaultValue : Boolean.parseBoolean(prop);
   }
 
-  public static  <T> T asModel(final String property, final Class<T> clazz) {
+  public static <T> T asModel(final String property, final Class<T> clazz) {
     if (isDefined(property)) {
       Config val = config.getConfig(property);
       return getModelFromConfig(clazz, val);
@@ -133,8 +133,7 @@ public class ConfigUtils {
   public static boolean isDefined(final String property) {
     try {
       return !config.getIsNull(property);
-    }
-    catch (ConfigException ex) {
+    } catch (ConfigException ex) {
       return false;
     }
   }

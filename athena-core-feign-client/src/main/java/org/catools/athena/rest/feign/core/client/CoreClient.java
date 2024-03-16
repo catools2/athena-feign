@@ -6,7 +6,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.catools.athena.core.model.*;
 import org.catools.athena.rest.feign.core.configs.CoreConfigs;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.Optional;
+import java.util.Set;
 
 import static org.catools.athena.rest.feign.common.utils.FeignUtils.getClient;
 
@@ -98,12 +100,12 @@ public class CoreClient {
 
   private static String normalizeString(final String input) {
     return input.toLowerCase()
-                .replaceAll("^.*\\\\", "")
-                .replaceAll("\\[.*?\\]", "")
-                .replaceAll("@.*$", "")
-                .replaceAll("[^a-z0-9_]+", " ")
-                .replaceAll("\\s+", " ")
-                .trim();
+        .replaceAll("^.*\\\\", "")
+        .replaceAll("\\[.*?\\]", "")
+        .replaceAll("@.*$", "")
+        .replaceAll("[^a-z0-9_]+", " ")
+        .replaceAll("\\s+", " ")
+        .trim();
   }
 
   private static ProjectDto search(ProjectDto entity) {

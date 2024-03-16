@@ -12,46 +12,46 @@ import org.catools.athena.rest.feign.core.configs.CoreConfigs;
 public class Args {
 
   @Parameter(names = {"-ah", "-athena-host"},
-             description = "The Athena api endpoint to send information to")
+      description = "The Athena api endpoint to send information to")
   private String athenaHost;
 
   @Parameter(names = {"-u", "-username"},
-             description = "The username to clone repository.")
+      description = "The username to clone repository.")
   private String username;
 
   @Parameter(names = {"-p", "-password"},
-             password = true,
-             description = "The password to clone repository.")
+      password = true,
+      description = "The password to clone repository.")
   private String password;
 
   @Parameter(names = {"-n", "-name"},
-             description = "The repository name.")
+      description = "The repository name.")
   private String name;
 
   @Parameter(names = {"-l", "-url"},
-             description = "The url to the repository to clone project from.")
+      description = "The url to the repository to clone project from.")
   private String url;
 
   @Parameter(names = {"-r", "-repo-info"},
-             description = "Set of repositories name and url in json format i.e. [{\"name\": \"...\",\"url\": \"...\"}]")
+      description = "Set of repositories name and url in json format i.e. [{\"name\": \"...\",\"url\": \"...\"}]")
   private String repoInfoSet;
 
   @Parameter(names = {"-lp", "-local-path"},
-             description = "The path to the local folder where repository should be clone to.")
+      description = "The path to the local folder where repository should be clone to.")
   private String localPath;
 
   @Parameter(names = {"-t", "-threads"},
-             converter = IntegerConverter.class,
-             description = "The number of total threads to use for parallel processing.")
+      converter = IntegerConverter.class,
+      description = "The number of total threads to use for parallel processing.")
   private Integer threadsCount;
 
   @Parameter(names = {"-m", "-timeout-in-minutes"},
-             converter = LongConverter.class,
-             description = "The total amount of wait for sync to be finished.")
+      converter = LongConverter.class,
+      description = "The total amount of wait for sync to be finished.")
   private Long timeoutInMinutes;
 
   @Parameter(names = "--help",
-             help = true)
+      help = true)
   private boolean help = false;
 
   public void loadConfig() {
