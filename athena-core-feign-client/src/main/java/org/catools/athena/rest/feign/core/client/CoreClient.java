@@ -21,6 +21,8 @@ public class CoreClient {
   private static final VersionClient VERSION_CLIENT = getClient(VersionClient.class, CoreConfigs.getAthenaHost());
   private static final UserClient USER_CLIENT = getClient(UserClient.class, CoreConfigs.getAthenaHost());
 
+  private static final QueryClient QUERY_CLIENT = getClient(QueryClient.class, CoreConfigs.getAthenaHost());
+
   public static ProjectDto searchOrCreateProject(ProjectDto project) {
     return Optional.ofNullable(search(project)).orElseGet(() -> {
       PROJECT_CLIENT.saveOrUpdate(project);
@@ -62,6 +64,14 @@ public class CoreClient {
     return Optional.ofNullable(ENVIRONMENT_CLIENT.search(keyword));
   }
 
+  public static Optional<Object> queryRecord(String sql) {
+    return Optional.ofNullable(QUERY_CLIENT.querySingleResult(sql));
+  }
+
+  public static Optional<Set<Object>> queryRecords(String sql) {
+    return Optional.ofNullable(QUERY_CLIENT.queryCollection(sql));
+  }
+
   private static UserDto searchUser(UserDto user) {
     UserDto userDto;
     for (UserAliasDto alias : user.getAliases()) {
@@ -82,7 +92,7 @@ public class CoreClient {
         aliases.add(new UserAliasDto(normalized));
       }
 
-      String aliasWithoutWS = normalized.replaceAll(" ", "");
+      String aliasWithoutWS = normalized.replace(" ", "");
       if (aliases.stream().noneMatch(a -> StringUtils.equalsIgnoreCase(a.getAlias(), aliasWithoutWS))) {
         aliases.add(new UserAliasDto(aliasWithoutWS));
       }
