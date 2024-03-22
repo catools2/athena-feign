@@ -6,7 +6,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
-import org.catools.athena.core.model.MetadataDto;
+import org.apache.commons.lang3.StringUtils;
 import org.catools.athena.core.model.UserAliasDto;
 import org.catools.athena.core.model.UserDto;
 import org.catools.athena.git.model.CommitDto;
@@ -29,13 +29,15 @@ import org.eclipse.jgit.revwalk.filter.RevFilter;
 import org.eclipse.jgit.treewalk.AbstractTreeIterator;
 import org.eclipse.jgit.treewalk.CanonicalTreeParser;
 import org.eclipse.jgit.treewalk.EmptyTreeIterator;
-import org.eclipse.jgit.util.StringUtils;
 import org.eclipse.jgit.util.io.NullOutputStream;
+import org.jetbrains.annotations.NotNull;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.time.Instant;
-import java.util.*;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 
 import static org.catools.athena.rest.feign.common.utils.ThreadUtils.executeInParallel;
 
@@ -52,10 +54,12 @@ public class RepositoryInfo {
 
   private GitRepositoryDto repositoryDto = new GitRepositoryDto();
 
+  @SuppressWarnings("unused")
   public void uploadRepository(int threadsCount, long timeoutInMinutes) {
     uploadRepository(threadsCount, timeoutInMinutes, null);
   }
 
+  @SuppressWarnings("unused")
   public void uploadRepository(Date since, Date until, int threadsCount, long timeoutInMinutes) {
     uploadRepository(threadsCount, timeoutInMinutes, CommitTimeRevFilter.between(since, until));
   }
@@ -85,7 +89,7 @@ public class RepositoryInfo {
     Repository repo = git.getRepository();
     executeInParallel(threadsCount, timeoutInMinutes, () -> {
       while (true) {
-        RevCommit next = null;
+        RevCommit next;
         synchronized (commits) {
           if (!commits.hasNext()) {
             return true;
@@ -98,24 +102,7 @@ public class RepositoryInfo {
   }
 
   protected void readCommit(Repository repo, RevCommit commit) {
-    CommitDto gitCommit = new CommitDto();
-    gitCommit.setRepository(name);
-    gitCommit.setHash(commit.getName());
-
-    if (commit.getParentCount() > 0) {
-      gitCommit.setParentHash(commit.getParent(0).getName());
-    }
-
-    gitCommit.setParentCount(commit.getParentCount());
-    gitCommit.setCommitTime(commit.getAuthorIdent().getWhen().toInstant());
-    gitCommit.setShortMessage(commit.getShortMessage());
-
-    gitCommit.setAuthor(readPerson(commit.getAuthorIdent()));
-    gitCommit.setCommitter(readPerson(commit.getCommitterIdent()));
-
-    readDiffEntries(repo, commit, gitCommit);
-    readRelatedTags(commit, gitCommit);
-    readMetadata(repo, commit, gitCommit);
+    CommitDto gitCommit = readCommitInfo(repo, commit);
 
     log.info("{} persisting commit, diffs: {}, author: {}, committer: {}, tags: {}, metadata: {}.",
         gitCommit.getHash(),
@@ -136,8 +123,32 @@ public class RepositoryInfo {
         gitCommit.getMetadata().size());
   }
 
-  protected Set<MetadataDto> readMetadata(Repository repo, RevCommit commit, CommitDto gitCommit) {
-    return new HashSet<>();
+  @NotNull
+  protected CommitDto readCommitInfo(Repository repo, RevCommit commit) {
+    CommitDto gitCommit = new CommitDto();
+    gitCommit.setRepository(name);
+    gitCommit.setHash(commit.getName());
+
+    if (commit.getParentCount() > 0) {
+      gitCommit.setParentHash(commit.getParent(0).getName());
+    }
+
+    gitCommit.setParentCount(commit.getParentCount());
+    gitCommit.setCommitTime(commit.getAuthorIdent().getWhen().toInstant());
+    if (StringUtils.isNotBlank(commit.getShortMessage())) {
+      gitCommit.setShortMessage(commit.getShortMessage());
+    } else if (StringUtils.isNotBlank(commit.getFullMessage())) {
+      gitCommit.setShortMessage(commit.getFullMessage().split("[\\r\\n]")[0]);
+    } else {
+      gitCommit.setShortMessage("UNSET");
+    }
+
+    gitCommit.setAuthor(readPerson(commit.getAuthorIdent()));
+    gitCommit.setCommitter(readPerson(commit.getCommitterIdent()));
+
+    readDiffEntries(repo, commit, gitCommit);
+    readRelatedTags(commit, gitCommit);
+    return gitCommit;
   }
 
   protected void readRelatedTags(RevCommit commit, CommitDto gitCommit) {
@@ -162,14 +173,14 @@ public class RepositoryInfo {
   protected String readPerson(PersonIdent person) {
     UserDto user = new UserDto();
 
-    if (!StringUtils.isEmptyOrNull(person.getName())) {
+    if (!StringUtils.isBlank(person.getName())) {
       user.setUsername(person.getName().toLowerCase());
 
-      if (!StringUtils.isEmptyOrNull(person.getEmailAddress())) {
+      if (!StringUtils.isBlank(person.getEmailAddress())) {
         user.getAliases().add(new UserAliasDto().setAlias(person.getEmailAddress().toLowerCase()));
       }
 
-    } else if (!StringUtils.isEmptyOrNull(person.getEmailAddress())) {
+    } else if (!StringUtils.isBlank(person.getEmailAddress())) {
       user.setUsername(person.getEmailAddress().toLowerCase());
     }
 
@@ -225,18 +236,6 @@ public class RepositoryInfo {
     }
 
     diffEntries.add(gitFileChange);
-  }
-
-  protected static String getContentDiff(Repository repository, DiffEntry diff) {
-    try (ByteArrayOutputStream out = new ByteArrayOutputStream(); DiffFormatter formatter = new DiffFormatter(out)) {
-
-      formatter.setRepository(repository);
-      formatter.format(diff);
-
-      return out.toString();
-    } catch (IOException e) {
-      throw new GitClientException("Failed to read content diff.", e);
-    }
   }
 
   private static AbstractTreeIterator getParser(Repository repo, RevCommit commit) {

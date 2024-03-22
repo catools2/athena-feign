@@ -9,7 +9,9 @@ import org.catools.athena.core.model.MetadataDto;
 import org.catools.athena.rest.feign.common.utils.JsonUtils;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Optional;
 import java.util.*;
+import java.util.function.BiFunction;
 import java.util.stream.Stream;
 
 @Slf4j
@@ -30,13 +32,13 @@ public class ConfigUtils {
    */
   public static synchronized void reload() {
     ConfigFactory.invalidateCaches();
-    String configToLoad = System.getProperty(CONFIGS_TO_LOAD);
+    String configToLoad = getProperty(CONFIGS_TO_LOAD);
     config = configToLoad != null ? ConfigFactory.load(configToLoad) : ConfigFactory.load();
     getUserDefinedSettings().forEach(entry -> {
       String key = entry.getKey();
       if (key.toLowerCase().startsWith("athena")) {
         String propName = convertToEnvVariable(key);
-        if (System.getProperty(propName) == null) {
+        if (getProperty(propName) == null) {
           System.setProperty(propName, config.getValue(key).unwrapped().toString());
         }
       }
@@ -48,47 +50,23 @@ public class ConfigUtils {
   }
 
   public static Integer getInteger(final String property, Integer defaultValue) {
-    if (isDefined(property)) {
-      return config.getInt(property);
-    }
-
-    String envValue = System.getProperty(convertToEnvVariable(property));
-    return envValue == null ? defaultValue : Integer.valueOf(envValue);
+    return asT(property, defaultValue, Config::getInt);
   }
 
   public static Long getLong(final String property, Long defaultValue) {
-    if (isDefined(property)) {
-      return config.getLong(property);
-    }
-
-    String envValue = System.getProperty(convertToEnvVariable(property));
-    return envValue == null ? defaultValue : Long.valueOf(envValue);
+    return asT(property, defaultValue, Config::getLong);
   }
 
   public static String getString(final String property, String defaultValue) {
-    if (isDefined(property)) {
-      return config.getString(property);
-    }
-
-    return StringUtils.defaultIfBlank(System.getProperty(convertToEnvVariable(property)), defaultValue);
+    return asT(property, defaultValue, Config::getString);
   }
 
   public static String getString(final String property) {
     return getString(property, null);
   }
 
-  @SuppressWarnings("uncheck")
   public static List<String> getStrings(final String property, List<String> defaultValue) {
-    if (isDefined(property)) {
-      try {
-        return config.getStringList(property);
-      } catch (ConfigException ex) {
-        return parseString(property).getStringList(VALUE);
-      }
-    }
-
-    String prop = System.getProperty(convertToEnvVariable(property));
-    return StringUtils.isBlank(prop) ? defaultValue : JsonUtils.readValue(prop, ArrayList.class);
+    return asT(property, defaultValue, Config::getStringList);
   }
 
   public static List<String> getStrings(final String property) {
@@ -96,38 +74,37 @@ public class ConfigUtils {
   }
 
   public static Boolean getBoolean(final String property, Boolean defaultValue) {
-    if (isDefined(property)) {
-      return config.getBoolean(property);
-    }
-
-    String prop = System.getProperty(convertToEnvVariable(property));
-    return StringUtils.isBlank(prop) ? defaultValue : Boolean.parseBoolean(prop);
+    return asT(property, defaultValue, Config::getBoolean);
   }
 
   public static <T> T asModel(final String property, final Class<T> clazz) {
-    if (isDefined(property)) {
-      Config val = config.getConfig(property);
-      return getModelFromConfig(clazz, val);
+    try {
+      return asT(property, null, (c, p) -> getModelFromConfig(clazz, c.getConfig(p)));
+    } catch (ConfigException ignored) {
+      return asT(property, null, (c, p) -> getModelFromConfig(clazz, c.getList(p)));
     }
+  }
 
-    String prop = System.getProperty(convertToEnvVariable(property));
-    return StringUtils.isBlank(prop) ? null : JsonUtils.readValue(prop, clazz);
+  private static <T> T getModelFromConfig(Class<T> clazz, Config config) {
+    String jsonFormatString = config.resolve().root().render(ConfigRenderOptions.concise());
+    return JsonUtils.readValue(jsonFormatString, clazz);
+  }
+
+  private static <T> T getModelFromConfig(Class<T> clazz, ConfigList config) {
+    String jsonFormatString = config.render(ConfigRenderOptions.concise());
+    return JsonUtils.readValue(jsonFormatString, clazz);
   }
 
   public static <T> Set<T> asSet(final String property, final Class<T> clazz) {
-    if (isDefined(property)) {
+    return asT(property, Sets.newHashSet(), (c, p) -> {
       Set<T> output = new HashSet<>();
       List<? extends Config> configs = config.getConfigList(property);
 
       for (Config val : configs) {
         output.add(getModelFromConfig(clazz, val));
       }
-
       return output;
-    }
-
-    String prop = System.getProperty(convertToEnvVariable(property));
-    return StringUtils.isBlank(prop) ? Sets.newHashSet() : JsonUtils.readValue(prop, HashSet.class);
+    });
   }
 
   public static boolean isDefined(final String property) {
@@ -138,21 +115,63 @@ public class ConfigUtils {
     }
   }
 
+  private static Stream<Map.Entry<String, ConfigValue>> getUserDefinedSettings() {
+    return config.entrySet().stream().filter(entry -> entry.getValue().origin().resource() != null);
+  }
+
+
+  public <T> T asT(String path, T defaultValue, BiFunction<Config, String, T> fuc) {
+    // If configuration defined then we might have 2 scenarios.
+    // 1- Case when value setup directly in configuration.
+    // 2- Case when value setup value using environmental variables.
+    // In the second scenario we need to read and parse the string value and process it.
+    // If the value is not defined in configuration then try to read value from Environmental Variables or System Properties
+    if (isDefined(path)) {
+      try {
+        return fuc.apply(config, path);
+      } catch (ConfigException ex) {
+        return fuc.apply(parseStringPath(path), VALUE);
+      }
+    }
+    String value = readPropertyOrEnv(path);
+
+    if (StringUtils.isBlank(value)) {
+      return defaultValue;
+    }
+
+    try {
+      return Optional.of(parseStringValue(value)).map(c -> fuc.apply(c, VALUE)).orElse(defaultValue);
+    } catch (ConfigException ignored) {
+      return Optional.of(parseStringValue(String.format("\"%s\"", value))).map(c -> fuc.apply(c, VALUE)).orElse(defaultValue);
+    }
+  }
+
+  private static Config parseStringPath(String path) {
+    return parseStringValue(config.getString(path));
+  }
+
+  private static Config parseStringValue(String value) {
+    return ConfigFactory.parseString(VALUE + " = " + value);
+  }
+
+  private static String readPropertyOrEnv(String property) {
+    String key = convertToEnvVariable(property);
+    return getProperty(key);
+  }
+
   @NotNull
   private static String convertToEnvVariable(final String property) {
     return property.toUpperCase().replaceAll("[^a-zA-Z0-9]+", "_");
   }
 
-  private static <T> T getModelFromConfig(Class<T> clazz, Config val) {
-    String jsonFormatString = val.resolve().root().render(ConfigRenderOptions.concise());
-    return JsonUtils.readValue(jsonFormatString, clazz);
-  }
 
-  private static Stream<Map.Entry<String, ConfigValue>> getUserDefinedSettings() {
-    return config.entrySet().stream().filter(entry -> entry.getValue().origin().resource() != null);
-  }
-
-  private static Config parseString(String path) {
-    return ConfigFactory.parseString(VALUE + " = " + config.getString(path));
+  /**
+   * Read system property or environment variable and return the value.
+   *
+   * @param key key to search for
+   * @return value from System Property or Environmental Variables
+   */
+  public static String getProperty(String key) {
+    return StringUtils.defaultIfBlank(System.getProperty(key), System.getenv(key));
   }
 }
