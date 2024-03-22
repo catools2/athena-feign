@@ -5,7 +5,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.catools.athena.rest.feign.common.utils.JsonUtils;
 import org.codehaus.jettison.json.JSONArray;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
 
 public class JiraCustomFieldOptionParser implements JiraFieldParser {
   private final IssueField field;
@@ -38,17 +41,14 @@ public class JiraCustomFieldOptionParser implements JiraFieldParser {
           if (!isDefaultValue(value)) {
             output.put(field.getName(), value);
           }
-        }
-        else if (!map.isEmpty()) {
+        } else if (!map.isEmpty()) {
           output.put(field.getName(), new ArrayList<>(map.values()).get(0));
-        }
-        else {
+        } else {
           field.getName();
         }
       }
       return output;
-    }
-    catch (Throwable t) {
+    } catch (Throwable t) {
       throw new RuntimeException(t);
     }
 

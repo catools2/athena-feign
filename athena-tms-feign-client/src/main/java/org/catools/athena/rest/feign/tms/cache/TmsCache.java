@@ -2,7 +2,9 @@ package org.catools.athena.rest.feign.tms.cache;
 
 import org.catools.athena.rest.feign.common.cache.CacheStorage;
 import org.catools.athena.rest.feign.tms.clients.TmsClient;
-import org.catools.athena.tms.model.*;
+import org.catools.athena.tms.model.ItemTypeDto;
+import org.catools.athena.tms.model.PriorityDto;
+import org.catools.athena.tms.model.StatusDto;
 
 public class TmsCache {
   private static final CacheStorage<String, StatusDto> STATUSES = new CacheStorage<>("Status", StatusDto::getCode, TmsClient::searchOrCreateStatus);

@@ -1,6 +1,9 @@
 package org.catools.athena.rest.feign.apispec.client;
 
-import feign.*;
+import feign.Headers;
+import feign.Param;
+import feign.RequestLine;
+import feign.Response;
 import org.catools.athena.git.model.GitRepositoryDto;
 
 

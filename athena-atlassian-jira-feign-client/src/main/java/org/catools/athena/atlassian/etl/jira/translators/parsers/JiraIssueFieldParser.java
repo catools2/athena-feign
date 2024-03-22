@@ -29,8 +29,7 @@ public class JiraIssueFieldParser implements JiraFieldParser {
     try {
       output.put(field.getName(), field.getValue().toString());
       return output;
-    }
-    catch (Throwable t) {
+    } catch (Throwable t) {
       throw new RuntimeException(t);
     }
   }

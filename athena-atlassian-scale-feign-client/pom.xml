@@ -33,6 +33,11 @@
             <artifactId>json-path</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+        </dependency>
+
         <!-- ###################### ATLASSIAN ######################### -->
         <dependency>
             <groupId>com.atlassian.jira</groupId>

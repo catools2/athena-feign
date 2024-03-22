@@ -6,13 +6,18 @@ import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.catools.athena.atlassian.etl.jira.translators.parsers.JiraParser;
-import org.catools.athena.core.model.*;
+import org.catools.athena.core.model.ProjectDto;
+import org.catools.athena.core.model.UserAliasDto;
+import org.catools.athena.core.model.UserDto;
 import org.catools.athena.rest.feign.core.cache.CoreCache;
 import org.catools.athena.rest.feign.tms.helpers.EtlHelper;
 import org.catools.athena.tms.model.ItemDto;
 import org.codehaus.jettison.json.JSONObject;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -49,9 +54,9 @@ public class TranslatorHelper {
 
     if (issue.getFields() != null) {
       Set<IssueField> noneNull = Sets.newHashSet(issue.getFields().iterator())
-                                     .stream()
-                                     .filter(TranslatorHelper::fieldIsNotNull)
-                                     .collect(Collectors.toSet());
+          .stream()
+          .filter(TranslatorHelper::fieldIsNotNull)
+          .collect(Collectors.toSet());
       for (IssueField field : noneNull) {
         Stream<Map.Entry<String, String>> fieldsToSync = JiraParser.parserJiraField(field).entrySet().stream();
 
@@ -88,8 +93,8 @@ public class TranslatorHelper {
 
   public static String getProject(BasicProject project) {
     return project == null || StringUtils.isBlank(project.getName()) ?
-           UNSET :
-           CoreCache.readProject(new ProjectDto(project.getKey(), project.getName())).getCode();
+        UNSET :
+        CoreCache.readProject(new ProjectDto(project.getKey(), project.getName())).getCode();
   }
 
   public static String getItemType(IssueType issueType) {

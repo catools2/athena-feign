@@ -1,7 +1,13 @@
 package org.catools.athena.atlassian.etl.scale.client;
 
-import feign.*;
-import org.catools.athena.atlassian.etl.scale.model.*;
+import feign.Headers;
+import feign.Param;
+import feign.RequestLine;
+import feign.Response;
+import org.catools.athena.atlassian.etl.scale.model.ScalePlanTestRun;
+import org.catools.athena.atlassian.etl.scale.model.ScaleTestCase;
+import org.catools.athena.atlassian.etl.scale.model.ScaleTestRun;
+import org.catools.athena.atlassian.etl.scale.model.ScaleUpdateTestResultRequest;
 
 import java.util.Set;
 

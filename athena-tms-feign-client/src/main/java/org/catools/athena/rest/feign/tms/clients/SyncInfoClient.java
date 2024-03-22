@@ -1,6 +1,8 @@
 package org.catools.athena.rest.feign.tms.clients;
 
-import feign.*;
+import feign.Headers;
+import feign.Param;
+import feign.RequestLine;
 import org.catools.athena.tms.model.SyncInfoDto;
 
 interface SyncInfoClient {

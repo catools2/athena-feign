@@ -1,6 +1,8 @@
 package org.catools.athena.atlassian.etl.jira.translators;
 
-import com.atlassian.jira.rest.client.api.domain.*;
+import com.atlassian.jira.rest.client.api.domain.ChangelogGroup;
+import com.atlassian.jira.rest.client.api.domain.ChangelogItem;
+import com.atlassian.jira.rest.client.api.domain.Issue;
 import com.google.common.collect.Sets;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -9,7 +11,9 @@ import org.catools.athena.tms.model.ItemDto;
 import org.catools.athena.tms.model.StatusTransitionDto;
 
 import java.time.Instant;
-import java.util.*;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -56,9 +60,9 @@ public class JiraTranslator {
         }
 
         List<ChangelogItem> transitions = Sets.newHashSet(changelog.getItems().iterator())
-                                              .stream()
-                                              .filter(f -> f != null && StringUtils.equalsIgnoreCase(f.getField(), "status"))
-                                              .collect(Collectors.toList());
+            .stream()
+            .filter(f -> f != null && StringUtils.equalsIgnoreCase(f.getField(), "status"))
+            .collect(Collectors.toList());
 
         String author = TranslatorHelper.getUser(changelog.getAuthor());
 

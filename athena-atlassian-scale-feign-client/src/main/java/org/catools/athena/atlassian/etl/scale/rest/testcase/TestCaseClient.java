@@ -11,7 +11,6 @@ import org.catools.athena.atlassian.etl.scale.client.ScaleTestClient;
 import org.catools.athena.atlassian.etl.scale.configs.ScaleConfigs;
 import org.catools.athena.atlassian.etl.scale.model.ScaleChangeHistory;
 import org.catools.athena.atlassian.etl.scale.model.ScaleTestCase;
-import org.catools.athena.rest.feign.common.utils.FeignUtils;
 import org.catools.athena.rest.feign.core.configs.CoreConfigs;
 
 import java.io.IOException;
@@ -21,7 +20,8 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 
-import static org.catools.athena.atlassian.etl.scale.client.ScaleClient.*;
+import static org.catools.athena.atlassian.etl.scale.client.ScaleClient.getScaleAtmClient;
+import static org.catools.athena.atlassian.etl.scale.client.ScaleClient.getScaleTestsClient;
 import static org.catools.athena.rest.feign.common.utils.ThreadUtils.executeInParallel;
 import static org.catools.athena.rest.feign.common.utils.ThreadUtils.sleep;
 
@@ -100,8 +100,7 @@ public class TestCaseClient {
     Response response = SCALE_TEST_CLIENT.getTestCaseAllVersions(testCaseKey, "id");
     try {
       return JsonPath.read(IOUtils.toString(response.body().asInputStream(), StandardCharsets.UTF_8), "$.[0].id");
-    }
-    catch (IOException e) {
+    } catch (IOException e) {
       throw new RuntimeException("Failed to parse response from client for testcase key " + testCaseKey, e);
     }
   }

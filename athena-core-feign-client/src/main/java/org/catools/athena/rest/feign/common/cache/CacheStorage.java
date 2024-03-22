@@ -9,7 +9,7 @@ import java.util.function.Function;
 
 @Slf4j
 @RequiredArgsConstructor
-public class CacheStorage <K, V> {
+public class CacheStorage<K, V> {
   private final Map<K, V> storage = new HashMap<>();
   private final String name;
   private final Function<V, K> keyGenerator;

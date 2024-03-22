@@ -3,16 +3,20 @@ package org.catools.athena.rest.feign.pipeline.helpers;
 import feign.Response;
 import lombok.extern.slf4j.Slf4j;
 import org.catools.athena.core.model.*;
-import org.catools.athena.pipeline.model.*;
+import org.catools.athena.pipeline.model.PipelineDto;
+import org.catools.athena.pipeline.model.PipelineExecutionDto;
+import org.catools.athena.pipeline.model.PipelineExecutionStatusDto;
+import org.catools.athena.pipeline.model.PipelineScenarioExecutionDto;
 import org.catools.athena.rest.feign.core.cache.CoreCache;
 import org.catools.athena.rest.feign.core.configs.CoreConfigs;
 import org.catools.athena.rest.feign.pipeline.cache.PipelineCache;
 import org.catools.athena.rest.feign.pipeline.configs.PipelineConfigs;
 import org.catools.athena.rest.feign.pipeline.utils.PipelineUtils;
-import org.jetbrains.annotations.Nullable;
 
 import java.time.Instant;
-import java.util.*;
+import java.util.HashSet;
+import java.util.Optional;
+import java.util.Set;
 
 import static org.catools.athena.rest.feign.common.utils.FeignUtils.getEntityId;
 
@@ -41,7 +45,7 @@ public class PipelineHelper {
                                                      Set<MetadataDto> metadataDto) {
     setupDependencies(host, project, version, environment);
     return Optional.ofNullable(PipelineUtils.getPipelineClient().getPipeline(pipelineName, pipelineNumber, version.getCode(), environment.getCode()))
-                   .orElse(buildPipeline(host, project, version, environment, pipelineName, pipelineNumber, pipelineDescription, metadataDto));
+        .orElse(buildPipeline(host, project, version, environment, pipelineName, pipelineNumber, pipelineDescription, metadataDto));
   }
 
   public static PipelineDto finishPipeline(PipelineDto pipeline) {
@@ -89,12 +93,12 @@ public class PipelineHelper {
 
     setupDependencies(host, project, version, environment);
     final PipelineDto pipeline = new PipelineDto().setName(pipelineName)
-                                                  .setDescription(pipelineDescription)
-                                                  .setNumber(pipelineNumber)
-                                                  .setStartDate(Instant.now())
-                                                  .setEnvironment(environment.getCode())
-                                                  .setVersion(version.getCode())
-                                                  .setMetadata(metadataDto);
+        .setDescription(pipelineDescription)
+        .setNumber(pipelineNumber)
+        .setStartDate(Instant.now())
+        .setEnvironment(environment.getCode())
+        .setVersion(version.getCode())
+        .setMetadata(metadataDto);
 
     return PipelineUtils.getPipeline(pipeline.getName(), pipeline.getNumber(), pipeline.getVersion(), pipeline.getEnvironment()).orElseGet(() -> {
       Set<MetadataDto> metadata = new HashSet<>();
@@ -104,13 +108,13 @@ public class PipelineHelper {
       }
 
       PipelineDto pipelineToSave = new PipelineDto().setName(pipeline.getName())
-                                                    .setNumber(pipeline.getNumber())
-                                                    .setEnvironment(environment.getCode())
-                                                    .setVersion(version.getCode())
-                                                    .setDescription(pipeline.getDescription())
-                                                    .setStartDate(pipeline.getStartDate())
-                                                    .setEndDate(pipeline.getEndDate())
-                                                    .setMetadata(metadata);
+          .setNumber(pipeline.getNumber())
+          .setEnvironment(environment.getCode())
+          .setVersion(version.getCode())
+          .setDescription(pipeline.getDescription())
+          .setStartDate(pipeline.getStartDate())
+          .setEndDate(pipeline.getEndDate())
+          .setMetadata(metadata);
 
       Response response = PipelineUtils.getPipelineClient().savePipeline(pipelineToSave);
       getEntityId(response).map(pipeline::setId);
