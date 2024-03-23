@@ -2,7 +2,9 @@ package org.catools.athena.atlassian.etl.scale.translators;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.catools.athena.atlassian.etl.scale.model.*;
+import org.catools.athena.atlassian.etl.scale.model.ScaleChangeHistory;
+import org.catools.athena.atlassian.etl.scale.model.ScaleChangeHistoryItem;
+import org.catools.athena.atlassian.etl.scale.model.ScaleTestCase;
 import org.catools.athena.tms.model.ItemDto;
 import org.catools.athena.tms.model.StatusTransitionDto;
 
@@ -129,11 +131,11 @@ public class ScaleTestCaseTranslator {
     }
 
     Set<String> potentialVersions = testCase.getCustomFields()
-                                            .entrySet()
-                                            .stream()
-                                            .filter(e -> e.getKey().toLowerCase().contains("version"))
-                                            .map(Map.Entry::getValue)
-                                            .collect(Collectors.toSet());
+        .entrySet()
+        .stream()
+        .filter(e -> e.getKey().toLowerCase().contains("version"))
+        .map(Map.Entry::getValue)
+        .collect(Collectors.toSet());
 
     for (final String potentialVersion : potentialVersions) {
       for (final String version : potentialVersion.split(",\\s+")) {

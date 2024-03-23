@@ -3,9 +3,6 @@ package org.catools.athena.rest.feign.jira;
 import com.beust.jcommander.JCommander;
 import lombok.extern.slf4j.Slf4j;
 import org.catools.athena.atlassian.etl.jira.JiraSyncClient;
-import org.catools.athena.core.model.ProjectDto;
-import org.catools.athena.rest.feign.core.cache.CoreCache;
-import org.catools.athena.rest.feign.core.configs.CoreConfigs;
 import org.jetbrains.annotations.NotNull;
 
 @Slf4j

@@ -24,8 +24,7 @@ public class CustomDateDeserializer extends StdDeserializer<Date> {
     String date = jsonparser.getText();
     try {
       return DateUtils.parseDateStrictly(date, Locale.getDefault(), "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-    }
-    catch (Throwable t) {
+    } catch (Throwable t) {
       throw new RuntimeException(String.format("cannot convert %s to date", date), t);
     }
   }

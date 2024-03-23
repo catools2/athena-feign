@@ -1,6 +1,8 @@
 package org.catools.athena.rest.feign.core.client;
 
-import feign.*;
+import feign.Headers;
+import feign.Param;
+import feign.RequestLine;
 import org.catools.athena.core.model.EnvironmentDto;
 
 interface EnvironmentClient {

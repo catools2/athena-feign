@@ -4,7 +4,10 @@ import com.atlassian.jira.rest.client.api.domain.IssueField;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -22,8 +25,8 @@ public class JiraParser {
 
   public static HashMap<String, String> parserJiraField(IssueField field) {
     List<Function<IssueField, JiraFieldParser>> list = FIELD_PARSERS.stream()
-                                                                    .filter(p -> p.apply(field).isRightParser())
-                                                                    .collect(Collectors.toList());
+        .filter(p -> p.apply(field).isRightParser())
+        .collect(Collectors.toList());
 
     // we skip any fields which does not have parser or if it is jira plug in at this point
     // in future we should implement parser for all fields

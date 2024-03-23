@@ -59,8 +59,8 @@ public class GitCli {
   private static void loadRepository(RepoInfo repoInfo) {
     GitRepositoryDto savedRepository = AthenaGitApi.getRepository(repoInfo.getName());
     RevFilter revFilter = savedRepository == null || savedRepository.getLastSync() == null ?
-                          CommitTimeRevFilter.NO_MERGES :
-                          CommitTimeRevFilter.after(Date.from(savedRepository.getLastSync()));
+        CommitTimeRevFilter.NO_MERGES :
+        CommitTimeRevFilter.after(Date.from(savedRepository.getLastSync()));
 
     Git git = cloneRepository(repoInfo);
 
@@ -70,8 +70,8 @@ public class GitCli {
 
   private static Git cloneRepository(RepoInfo repoInfo) {
     String localPath = Path.of(StringUtils.defaultIfBlank(GitConfigs.getLocalPath(), "./tmp/repository/"), repoInfo.getName() + Instant.now())
-                           .toFile()
-                           .getPath();
+        .toFile()
+        .getPath();
 
     if (StringUtils.isNoneBlank(GitConfigs.getUsername())) {
       return GitCloneClient.clone(localPath, repoInfo.getName(), repoInfo.getUrl(), GitConfigs.getUsername(), GitConfigs.getPassword());

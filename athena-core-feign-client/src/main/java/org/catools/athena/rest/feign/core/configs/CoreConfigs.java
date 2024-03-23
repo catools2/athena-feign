@@ -3,7 +3,9 @@ package org.catools.athena.rest.feign.core.configs;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.UtilityClass;
-import org.catools.athena.core.model.*;
+import org.catools.athena.core.model.EnvironmentDto;
+import org.catools.athena.core.model.ProjectDto;
+import org.catools.athena.core.model.VersionDto;
 import org.catools.athena.rest.feign.common.configs.ConfigUtils;
 
 @UtilityClass

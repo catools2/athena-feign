@@ -72,8 +72,8 @@ public class TmsClient {
     return TEST_CYCLE_CLIENT.findByCode(keyword);
   }
 
-  public static Integer getUniqueHashByCode(final String keyword) {
-    return TEST_CYCLE_CLIENT.getUniqueHashByCode(keyword);
+  public static String getSHA256(final String keyword) {
+    return TEST_CYCLE_CLIENT.getSHA256(keyword).getOrDefault("sha", "");
   }
 
   public static TestCycleDto findLastTestCycleByPattern(final String name, final String versionCode) {

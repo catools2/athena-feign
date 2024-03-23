@@ -23,7 +23,7 @@ import static org.catools.athena.rest.feign.tms.helpers.EtlHelper.*;
 @Slf4j
 @UtilityClass
 public class ScaleTestRunTranslator {
-  public static TestCycleDto translateTestRun(final String projectKey, ScaleTestRun testRun, Integer uniqueHash) {
+  public static TestCycleDto translateTestRun(final String projectKey, ScaleTestRun testRun, String hash) {
     log.info("Start translating test run {} with {} execution items.", testRun.getKey(), testRun.getItems().size());
 
     Objects.requireNonNull(testRun);
@@ -52,7 +52,7 @@ public class ScaleTestRunTranslator {
 
     log.debug("Finish translating test run {} with {} execution items.", testRun.getKey(), testRun.getItems().size());
 
-    etlCycle.setUniqueHash(uniqueHash);
+    etlCycle.setSha256(hash);
     return etlCycle;
   }
 
@@ -75,7 +75,14 @@ public class ScaleTestRunTranslator {
     StatusDto status = TmsCache.readStatus(new StatusDto(EtlUtils.generateCode("Archived"), "Archived"));
     PriorityDto priority = TmsCache.readPriority(new PriorityDto(EtlUtils.generateCode("Normal"), "Normal"));
     UserDto user = CoreCache.readUser(new UserDto("robot"));
-    ItemDto itemDto = new ItemDto().setType(itemType.getCode()).setCreatedBy(user.getUsername()).setCreatedOn(testRun.getCreatedOn().toInstant()).setCode(item.getTestCaseKey()).setProject(projectKey).setStatus(status.getCode()).setPriority(priority.getCode()).setName("Place holder for archived test case " + item.getTestCaseKey());
+    ItemDto itemDto = new ItemDto().setType(itemType.getCode())
+        .setCreatedBy(user.getUsername())
+        .setCreatedOn(testRun.getCreatedOn().toInstant())
+        .setCode(item.getTestCaseKey())
+        .setProject(projectKey)
+        .setStatus(status.getCode())
+        .setPriority(priority.getCode())
+        .setName("Place holder for archived test case " + item.getTestCaseKey());
     TmsClient.saveItem(itemDto);
   }
 

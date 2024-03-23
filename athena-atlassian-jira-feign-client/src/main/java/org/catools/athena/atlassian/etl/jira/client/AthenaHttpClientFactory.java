@@ -5,7 +5,9 @@ import com.atlassian.httpclient.apache.httpcomponents.DefaultHttpClientFactory;
 import com.atlassian.httpclient.api.HttpClient;
 import com.atlassian.httpclient.api.factory.HttpClientOptions;
 import com.atlassian.jira.rest.client.api.AuthenticationHandler;
-import com.atlassian.jira.rest.client.internal.async.*;
+import com.atlassian.jira.rest.client.internal.async.AsynchronousHttpClientFactory;
+import com.atlassian.jira.rest.client.internal.async.AtlassianHttpClientDecorator;
+import com.atlassian.jira.rest.client.internal.async.DisposableHttpClient;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.sal.api.UrlMode;
 import com.atlassian.sal.api.executor.ThreadLocalContextManager;
@@ -13,11 +15,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
-import java.util.*;
+import java.util.Date;
+import java.util.Optional;
+import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -73,18 +79,15 @@ public class AthenaHttpClientFactory extends AsynchronousHttpClientFactory {
         props.load(resourceAsStream);
         String var4 = props.getProperty("version", "unknown");
         return var4;
-      }
-      catch (Exception var15) {
+      } catch (Exception var15) {
         logger.debug("Could not find version for maven artifact {}:{}", groupId, artifactId);
         logger.debug("Got the following exception", var15);
         var5 = "unknown";
-      }
-      finally {
+      } finally {
         if (resourceAsStream != null) {
           try {
             resourceAsStream.close();
-          }
-          catch (IOException var14) {
+          } catch (IOException var14) {
           }
         }
 

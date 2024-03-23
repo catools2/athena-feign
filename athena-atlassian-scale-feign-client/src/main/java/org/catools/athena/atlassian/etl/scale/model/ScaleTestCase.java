@@ -10,7 +10,10 @@ import lombok.experimental.Accessors;
 import org.catools.athena.atlassian.etl.scale.utils.CustomDateDeserializer;
 import org.catools.athena.atlassian.etl.scale.utils.CustomDateSerializer;
 
-import java.util.*;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 
 @Data
 @NoArgsConstructor

@@ -4,9 +4,14 @@ import com.jcraft.jsch.Session;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import org.catools.athena.rest.feign.apispec.exception.GitClientException;
-import org.eclipse.jgit.api.*;
+import org.eclipse.jgit.api.CloneCommand;
+import org.eclipse.jgit.api.Git;
+import org.eclipse.jgit.api.TransportConfigCallback;
 import org.eclipse.jgit.api.errors.GitAPIException;
-import org.eclipse.jgit.transport.*;
+import org.eclipse.jgit.transport.SshSessionFactory;
+import org.eclipse.jgit.transport.SshTransport;
+import org.eclipse.jgit.transport.Transport;
+import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 import org.eclipse.jgit.transport.ssh.jsch.JschConfigSessionFactory;
 import org.eclipse.jgit.transport.ssh.jsch.OpenSshConfig;
 
@@ -47,11 +52,9 @@ public class GitCloneClient {
     try {
       log.info("Start cloning {} repository from {}.", name, url);
       return command.setDirectory(gitDir).call();
-    }
-    catch (GitAPIException e) {
+    } catch (GitAPIException e) {
       throw new GitClientException("Failed to clone the git repository", e);
-    }
-    finally {
+    } finally {
       log.info("Finish cloning {} repository from {}.", name, url);
     }
   }

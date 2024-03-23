@@ -5,7 +5,10 @@ import lombok.experimental.UtilityClass;
 import org.catools.athena.pipeline.model.PipelineDto;
 import org.catools.athena.pipeline.model.PipelineExecutionStatusDto;
 import org.catools.athena.rest.feign.core.configs.CoreConfigs;
-import org.catools.athena.rest.feign.pipeline.clients.*;
+import org.catools.athena.rest.feign.pipeline.clients.ExecutionClient;
+import org.catools.athena.rest.feign.pipeline.clients.ExecutionStatusClient;
+import org.catools.athena.rest.feign.pipeline.clients.PipelineClient;
+import org.catools.athena.rest.feign.pipeline.clients.ScenarioExecutionClient;
 
 import java.util.Optional;
 
@@ -25,8 +28,7 @@ public class PipelineUtils {
           pipelineNumber,
           versionCode,
           environmentCode));
-    }
-    catch (FeignException.NotFound ex) {
+    } catch (FeignException.NotFound ex) {
       return Optional.empty();
     }
   }

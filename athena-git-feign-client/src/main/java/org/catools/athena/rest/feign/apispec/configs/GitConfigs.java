@@ -2,14 +2,9 @@ package org.catools.athena.rest.feign.apispec.configs;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.catools.athena.rest.feign.apispec.entity.RepoInfo;
 import org.catools.athena.rest.feign.apispec.entity.RepoInfoSet;
 import org.catools.athena.rest.feign.common.configs.ConfigUtils;
 import org.catools.athena.rest.feign.common.utils.JsonUtils;
-
-import java.util.ArrayList;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 public class GitConfigs {
 

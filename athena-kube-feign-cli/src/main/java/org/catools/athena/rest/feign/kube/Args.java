@@ -14,61 +14,61 @@ import java.util.List;
 public class Args {
 
   @Parameter(names = {"-ah", "-athena-host"},
-             description = "The Athena api endpoint to send information to")
+      description = "The Athena api endpoint to send information to")
   private String athenaHost;
 
   @Parameter(names = {"-pn", "-project-name"},
-             description = "The unique project name to use for project identification")
+      description = "The unique project name to use for project identification")
   private String projectName;
 
   @Parameter(names = {"-pc", "-project-code"},
-             description = "The unique project code to use for project identification")
+      description = "The unique project code to use for project identification")
   private String projectCode;
 
   @Parameter(names = {"-t", "-threads"},
-             converter = IntegerConverter.class,
-             description = "The number of total threads to use for parallel processing.")
+      converter = IntegerConverter.class,
+      description = "The number of total threads to use for parallel processing.")
   private Integer threadsCount;
 
   @Parameter(names = {"-m", "-timeout-in-minutes"},
-             converter = LongConverter.class,
-             description = "The total amount of wait for sync to be finished.")
+      converter = LongConverter.class,
+      description = "The total amount of wait for sync to be finished.")
   private Long timeoutInMinutes;
 
   @Parameter(names = {"-ns", "-namespaces"},
-             description = "The namespaces to read data from.")
+      description = "The namespaces to read data from.")
   private List<String> namespaces;
 
   @Parameter(names = {"-ct", "-connection-type"},
-             description = "The connection type to be used for kubernetes interaction. [DEFAULT, URL, CREDENTIAL, TOKEN, CONFIG]")
+      description = "The connection type to be used for kubernetes interaction. [DEFAULT, URL, CREDENTIAL, TOKEN, CONFIG]")
   private static String connectionType;
 
   @Parameter(names = {"-s", "-ssl"},
-             description = "If connection should use SSL validation.")
+      description = "If connection should use SSL validation.")
   private static Boolean shouldValidateSSL;
 
   @Parameter(names = {"-l", "-connection-url"},
-             description = "The connection url.")
+      description = "The connection url.")
   private static String connectionUrl;
 
   @Parameter(names = {"-u", "-username"},
-             description = "The username to be used for connection.")
+      description = "The username to be used for connection.")
   private static String connectionUsername;
 
   @Parameter(names = {"-p", "-password"},
-             description = "The password to be used for connection.")
+      description = "The password to be used for connection.")
   private static String connectionPassword;
 
   @Parameter(names = {"-tk", "-connection-token"},
-             description = "The token to be used for connection.")
+      description = "The token to be used for connection.")
   private static String connectionToken;
 
   @Parameter(names = {"-f", "-config-file"},
-             description = "The path to the config file location to be used for connection.")
+      description = "The path to the config file location to be used for connection.")
   private static String kubeConfigPath;
 
   @Parameter(names = "--help",
-             help = true)
+      help = true)
   private boolean help = false;
 
   public void loadConfig() {

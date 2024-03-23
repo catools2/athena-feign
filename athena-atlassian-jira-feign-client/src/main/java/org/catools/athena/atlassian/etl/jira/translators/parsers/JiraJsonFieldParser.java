@@ -32,8 +32,7 @@ public class JiraJsonFieldParser implements JiraFieldParser {
     try {
       output.put(field.getName(), ((JSONObject) field.getValue()).getString(valueAttribute));
       return output;
-    }
-    catch (Throwable t) {
+    } catch (Throwable t) {
       throw new RuntimeException(t);
     }
   }

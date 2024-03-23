@@ -8,7 +8,9 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.catools.athena.atlassian.etl.scale.client.ScaleAtmClient;
 import org.catools.athena.atlassian.etl.scale.configs.ScaleConfigs;
-import org.catools.athena.atlassian.etl.scale.model.*;
+import org.catools.athena.atlassian.etl.scale.model.ScalePlanTestRun;
+import org.catools.athena.atlassian.etl.scale.model.ScaleTestRun;
+import org.catools.athena.atlassian.etl.scale.model.ScaleUpdateTestResultRequest;
 import org.catools.athena.rest.feign.core.configs.CoreConfigs;
 
 import java.io.IOException;
@@ -56,8 +58,7 @@ public class TestRunClient {
 
     try {
       return JsonPath.read(IOUtils.toString(response.body().asInputStream(), StandardCharsets.UTF_8), "$.key");
-    }
-    catch (IOException e) {
+    } catch (IOException e) {
       throw new RuntimeException("Failed to parse response from test run " + planTestRun, e);
     }
   }

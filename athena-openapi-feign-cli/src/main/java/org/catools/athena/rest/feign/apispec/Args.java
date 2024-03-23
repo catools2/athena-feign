@@ -12,31 +12,31 @@ import java.util.List;
 public class Args {
 
   @Parameter(names = {"-ah", "-athena-host"},
-             description = "The Athena api endpoint to send information to")
+      description = "The Athena api endpoint to send information to")
   private String athenaHost;
 
   @Parameter(names = {"-n", "-names"},
-             description = "The Open Api Spec Names")
+      description = "The Open Api Spec Names")
   private List<String> specNames;
 
   @Parameter(names = {"-l", "-urls"},
-             description = "The urls to the Open Api spec json file")
+      description = "The urls to the Open Api spec json file")
   private List<String> specUrls;
 
   @Parameter(names = {"-s", "-spec-info"},
-             description = "Set of Open Api Spec name and url in json format i.e. [{\"name\": \"...\",\"url\": \"...\"}]")
+      description = "Set of Open Api Spec name and url in json format i.e. [{\"name\": \"...\",\"url\": \"...\"}]")
   private String specInfoSet;
 
   @Parameter(names = {"-pn", "-project-name"},
-             description = "The unique project name to use for project identification")
+      description = "The unique project name to use for project identification")
   private String projectName;
 
   @Parameter(names = {"-pc", "-project-code"},
-             description = "The unique project code to use for project identification")
+      description = "The unique project code to use for project identification")
   private String projectCode;
 
   @Parameter(names = "--help",
-             help = true)
+      help = true)
   private boolean help = false;
 
   public void loadConfig() {

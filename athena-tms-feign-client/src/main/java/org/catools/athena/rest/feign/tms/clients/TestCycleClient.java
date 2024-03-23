@@ -1,12 +1,16 @@
 package org.catools.athena.rest.feign.tms.clients;
 
-import feign.*;
+import feign.Headers;
+import feign.Param;
+import feign.RequestLine;
 import org.catools.athena.tms.model.TestCycleDto;
+
+import java.util.Map;
 
 interface TestCycleClient {
 
-  @RequestLine("GET /tms/cycle/{code}/hash")
-  Integer getUniqueHashByCode(
+  @RequestLine("GET /tms/cycle/{code}/sha256")
+  Map<String, String> getSHA256(
       @Param("code")
       String code);
 

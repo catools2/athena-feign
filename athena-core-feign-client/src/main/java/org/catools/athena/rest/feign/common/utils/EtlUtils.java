@@ -22,5 +22,4 @@ public class EtlUtils {
     String code = String.valueOf(UUID.nameUUIDFromBytes(normalizedName.getBytes())).replaceAll("\\W", "");
     return code.substring(0, Math.min(code.length(), 10));
   }
-
 }
