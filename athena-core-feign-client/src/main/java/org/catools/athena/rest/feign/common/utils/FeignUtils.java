@@ -3,15 +3,21 @@ package org.catools.athena.rest.feign.common.utils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import feign.*;
+import feign.Feign;
+import feign.FeignException;
+import feign.Logger;
+import feign.Request;
+import feign.Response;
 import feign.auth.BasicAuthRequestInterceptor;
 import feign.jackson.JacksonDecoder;
 import feign.jackson.JacksonEncoder;
 import feign.okhttp.OkHttpClient;
 import feign.slf4j.Slf4jLogger;
+import jakarta.validation.constraints.NotNull;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
-import org.jetbrains.annotations.NotNull;
+import org.catools.athena.rest.feign.common.configs.FeignConfigs;
+import org.catools.athena.rest.feign.common.model.CustomRetryer;
 
 import java.text.SimpleDateFormat;
 import java.util.Optional;
@@ -24,13 +30,15 @@ public class FeignUtils {
   public static final String DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
   public static final String ENTITY_ID = "entity_id";
   public static final String UTC = "UTC";
+  public static final int READ_TIMEOUT = FeignConfigs.getReadTimeout();
+  public static final int CONNECT_TIMEOUT = FeignConfigs.getConnectTimeout();
 
   public static <T> T getClient(Class<T> clazz, String host) {
-    return getClient(clazz, host, 30, 300);
+    return getClient(clazz, host, CONNECT_TIMEOUT, READ_TIMEOUT);
   }
 
   public static <T> T getClient(Class<T> clazz, String host, String username, String password) {
-    return getClient(clazz, host, username, password, 30, 300);
+    return getClient(clazz, host, username, password, CONNECT_TIMEOUT, READ_TIMEOUT);
   }
 
   public static <T> T getClient(Class<T> clazz, String host, String username, String password, int connectTimeout, int readTimeout) {
@@ -39,7 +47,7 @@ public class FeignUtils {
   }
 
   public static <T> T getClient(Class<T> clazz, String host, String token) {
-    return getClient(clazz, host, token, 30, 300);
+    return getClient(clazz, host, token, CONNECT_TIMEOUT, READ_TIMEOUT);
   }
 
   public static <T> T getClient(Class<T> clazz, String host, String token, int connectTimeout, int readTimeout) {
@@ -59,6 +67,7 @@ public class FeignUtils {
         .client(new OkHttpClient())
         .encoder(new JacksonEncoder(objectMapper()))
         .decoder(new JacksonDecoder(objectMapper()))
+        .retryer(new CustomRetryer())
         .responseInterceptor((ctx, chain) -> {
           Response response = ctx.response();
           if (response.status() >= 300) {

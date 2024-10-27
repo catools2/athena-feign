@@ -6,8 +6,15 @@ import org.catools.athena.rest.feign.common.configs.ConfigUtils;
 
 public class MetricsConfigs {
 
+  static {
+    reload();
+  }
+
   @Setter
   @Getter
-  private static boolean enable = ConfigUtils.getBoolean("athena.metrics.enable", true);
+  private static boolean enable;
 
+  public static void reload() {
+    enable = ConfigUtils.getBoolean("athena.metrics.enable", true);
+  }
 }

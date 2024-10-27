@@ -1,6 +1,15 @@
 package org.catools.athena.atlassian.etl.jira.translators;
 
-import com.atlassian.jira.rest.client.api.domain.*;
+import com.atlassian.jira.rest.client.api.domain.BasicComponent;
+import com.atlassian.jira.rest.client.api.domain.BasicPriority;
+import com.atlassian.jira.rest.client.api.domain.BasicProject;
+import com.atlassian.jira.rest.client.api.domain.BasicUser;
+import com.atlassian.jira.rest.client.api.domain.Issue;
+import com.atlassian.jira.rest.client.api.domain.IssueField;
+import com.atlassian.jira.rest.client.api.domain.IssueLink;
+import com.atlassian.jira.rest.client.api.domain.IssueType;
+import com.atlassian.jira.rest.client.api.domain.Status;
+import com.atlassian.jira.rest.client.api.domain.Version;
 import com.google.common.collect.Sets;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
@@ -49,6 +58,12 @@ public class TranslatorHelper {
     if (issue.getLabels() != null) {
       for (final String label : issue.getLabels()) {
         item.getMetadata().add(getMetaData("Label", label));
+      }
+    }
+
+    if (issue.getIssueLinks() != null) {
+      for (final IssueLink issueLink : issue.getIssueLinks()) {
+        item.getMetadata().add(getMetaData("IssueLink", issueLink.getTargetIssueKey()));
       }
     }
 

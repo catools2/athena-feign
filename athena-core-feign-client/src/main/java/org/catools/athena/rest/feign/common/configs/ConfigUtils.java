@@ -34,15 +34,6 @@ public class ConfigUtils {
     ConfigFactory.invalidateCaches();
     String configToLoad = getProperty(CONFIGS_TO_LOAD);
     config = configToLoad != null ? ConfigFactory.load(configToLoad) : ConfigFactory.load();
-    getUserDefinedSettings().forEach(entry -> {
-      String key = entry.getKey();
-      if (key.toLowerCase().startsWith("athena")) {
-        String propName = convertToEnvVariable(key);
-        if (getProperty(propName) == null) {
-          System.setProperty(propName, config.getValue(key).unwrapped().toString());
-        }
-      }
-    });
   }
 
   public static Set<MetadataDto> getMetadataSet(final String propertyName) {
@@ -127,11 +118,11 @@ public class ConfigUtils {
     // In the second scenario we need to read and parse the string value and process it.
     // If the value is not defined in configuration then try to read value from Environmental Variables or System Properties
     if (isDefined(path)) {
-      try {
-        return fuc.apply(config, path);
-      } catch (ConfigException ex) {
-        return fuc.apply(parseStringPath(path), VALUE);
-      }
+      return getDefinedValue(path, fuc);
+    }
+
+    if (isDefined(convertToEnvVariable(path))) {
+      return getDefinedValue(convertToEnvVariable(path), fuc);
     }
     String value = readPropertyOrEnv(path);
 
@@ -143,6 +134,14 @@ public class ConfigUtils {
       return Optional.of(parseStringValue(value)).map(c -> fuc.apply(c, VALUE)).orElse(defaultValue);
     } catch (ConfigException ignored) {
       return Optional.of(parseStringValue(String.format("\"%s\"", value))).map(c -> fuc.apply(c, VALUE)).orElse(defaultValue);
+    }
+  }
+
+  private static <T> T getDefinedValue(String path, BiFunction<Config, String, T> fuc) {
+    try {
+      return fuc.apply(config, path);
+    } catch (ConfigException ex) {
+      return fuc.apply(parseStringPath(path), VALUE);
     }
   }
 

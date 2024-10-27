@@ -10,19 +10,29 @@ import java.util.List;
 
 public class OpenApiConfigs {
 
-  @Setter
-  @Getter
-  private static List<String> specNames = ConfigUtils.getStrings("athena.openapi.spec.names");
+  static {
+    reload();
+  }
 
   @Setter
   @Getter
-  private static List<String> specUrls = ConfigUtils.getStrings("athena.openapi.spec.urls");
+  private static List<String> specNames;
 
   @Setter
   @Getter
-  private static SpecInfoSet specInfoSet = ConfigUtils.asModel("athena.openapi.specs", SpecInfoSet.class);
+  private static List<String> specUrls;
+
+  @Setter
+  @Getter
+  private static SpecInfoSet specInfoSet;
 
   public static void setSpecInfo(String input) {
     specInfoSet = JsonUtils.readValue(input, SpecInfoSet.class);
+  }
+
+  public static void reload() {
+    specNames = ConfigUtils.getStrings("athena.openapi.spec.names");
+    specUrls = ConfigUtils.getStrings("athena.openapi.spec.urls");
+    specInfoSet = ConfigUtils.asModel("athena.openapi.specs", SpecInfoSet.class);
   }
 }

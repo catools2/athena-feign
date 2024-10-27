@@ -19,7 +19,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-        <java.version>17</java.version>
+        <java.version>21</java.version>
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
 
@@ -29,7 +29,7 @@
         <!-- ###################### COMMON ######################### -->
         <lombok.version>1.18.30</lombok.version>
         <junit-jupiter.version>5.10.1</junit-jupiter.version>
-        <feign.version>13.2.1</feign.version>
+        <feign.version>13.3</feign.version>
         <slf4j-api.version>2.1.0-alpha1</slf4j-api.version>
         <log4j-slf4j2-impl.version>3.0.0-beta2</log4j-slf4j2-impl.version>
         <swagger-core.version>2.2.20</swagger-core.version>

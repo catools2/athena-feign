@@ -11,49 +11,67 @@ import org.catools.athena.rest.feign.common.configs.ConfigUtils;
 @UtilityClass
 public class CoreConfigs {
 
-  @Setter
-  @Getter
-  private static String athenaHost = ConfigUtils.getString("athena.host", "http://localhost:8080/api");
+  static {
+    reload();
+  }
 
   @Setter
   @Getter
-  private static String projectName = ConfigUtils.getString("athena.project.name");
+  private static String athenaHost;
 
   @Setter
   @Getter
-  private static String projectCode = ConfigUtils.getString("athena.project.code");
+  private static String projectName;
 
   @Setter
   @Getter
-  private static String environmentName = ConfigUtils.getString("athena.environment.name");
+  private static String projectCode;
 
   @Setter
   @Getter
-  private static String environmentCode = ConfigUtils.getString("athena.environment.code");
+  private static String environmentName;
 
   @Setter
   @Getter
-  private static String versionName = ConfigUtils.getString("athena.version.name");
+  private static String environmentCode;
 
   @Setter
   @Getter
-  private static String versionCode = ConfigUtils.getString("athena.version.code");
+  private static String versionName;
 
   @Setter
   @Getter
-  private static Integer startAt = ConfigUtils.getInteger("athena.start_at", 0);
+  private static String versionCode;
 
   @Setter
   @Getter
-  private static Integer bufferSize = ConfigUtils.getInteger("athena.buffer_size", 50);
+  private static Integer startAt;
 
   @Setter
   @Getter
-  private static Integer threadsCount = ConfigUtils.getInteger("athena.threads_count", 10);
+  private static Integer bufferSize;
 
   @Setter
   @Getter
-  private static Long timeoutInMinutes = ConfigUtils.getLong("athena.timeout", 60 * 2L);
+  private static Integer threadsCount;
+
+  @Setter
+  @Getter
+  private static Long timeoutInMinutes;
+
+  public static void reload() {
+    athenaHost = ConfigUtils.getString("athena.host", "http://localhost:8080/api");
+    projectName = ConfigUtils.getString("athena.project.name");
+    projectCode = ConfigUtils.getString("athena.project.code");
+    environmentName = ConfigUtils.getString("athena.environment.name");
+    environmentCode = ConfigUtils.getString("athena.environment.code");
+    versionName = ConfigUtils.getString("athena.version.name");
+    versionCode = ConfigUtils.getString("athena.version.code");
+    startAt = ConfigUtils.getInteger("athena.start_at", 0);
+    bufferSize = ConfigUtils.getInteger("athena.buffer_size", 50);
+    threadsCount = ConfigUtils.getInteger("athena.threads_count", 10);
+    timeoutInMinutes = ConfigUtils.getLong("athena.timeout", 60 * 2L);
+  }
 
   public static ProjectDto getProject() {
     return new ProjectDto(projectCode, projectName);

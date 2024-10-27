@@ -14,36 +14,51 @@ import java.util.List;
 @UtilityClass
 public class KubeConfigs {
 
-  @Setter
-  @Getter
-  private static List<String> namespaces = ConfigUtils.getStrings("athena.kube.namespaces");
+  static {
+    reload();
+  }
 
   @Setter
   @Getter
-  private static String connectionType = ConfigUtils.getString("athena.kube.connection.type", KubeConnectionType.DEFAULT.name());
+  private static List<String> namespaces;
 
   @Setter
   @Getter
-  private static Boolean shouldValidateSSL = ConfigUtils.getBoolean("athena.kube.connection.validate_ssl", false);
+  private static String connectionType;
 
   @Setter
   @Getter
-  private static String connectionUrl = ConfigUtils.getString("athena.kube.connection.url", KubeConnectionType.DEFAULT.name());
+  private static Boolean shouldValidateSSL;
 
   @Setter
   @Getter
-  private static String connectionUsername = ConfigUtils.getString("athena.kube.connection.username");
+  private static String connectionUrl;
 
   @Setter
   @Getter
-  private static String connectionPassword = ConfigUtils.getString("athena.kube.connection.password");
+  private static String connectionUsername;
 
   @Setter
   @Getter
-  private static String connectionToken = ConfigUtils.getString("athena.kube.connection.token");
+  private static String connectionPassword;
 
   @Setter
   @Getter
-  private static String kubeConfigPath = ConfigUtils.getString("athena.kube.connection.kube_config_path");
+  private static String connectionToken;
+
+  @Setter
+  @Getter
+  private static String kubeConfigPath;
+
+  public static void reload() {
+    namespaces = ConfigUtils.getStrings("athena.kube.namespaces");
+    connectionType = ConfigUtils.getString("athena.kube.connection.type", KubeConnectionType.DEFAULT.name());
+    shouldValidateSSL = ConfigUtils.getBoolean("athena.kube.connection.validate_ssl", false);
+    connectionUrl = ConfigUtils.getString("athena.kube.connection.url", KubeConnectionType.DEFAULT.name());
+    connectionUsername = ConfigUtils.getString("athena.kube.connection.username");
+    connectionPassword = ConfigUtils.getString("athena.kube.connection.password");
+    connectionToken = ConfigUtils.getString("athena.kube.connection.token");
+    kubeConfigPath = ConfigUtils.getString("athena.kube.connection.kube_config_path");
+  }
 
 }

@@ -8,31 +8,44 @@ import org.catools.athena.rest.feign.common.utils.JsonUtils;
 
 public class GitConfigs {
 
-  @Setter
-  @Getter
-  private static String username = ConfigUtils.getString("athena.git.username");
+  static {
+    reload();
+  }
 
   @Setter
   @Getter
-  private static String password = ConfigUtils.getString("athena.git.password");
+  private static String username;
 
   @Setter
   @Getter
-  private static String name = ConfigUtils.getString("athena.git.repo.name");
+  private static String password;
 
   @Setter
   @Getter
-  private static String url = ConfigUtils.getString("athena.git.repo.url");
+  private static String name;
 
   @Setter
   @Getter
-  private static RepoInfoSet repoInfoSet = ConfigUtils.asModel("athena.git.repo.set", RepoInfoSet.class);
+  private static String url;
 
   @Setter
   @Getter
-  private static String localPath = ConfigUtils.getString("athena.git.local_path", "./tmp/repository/");
+  private static RepoInfoSet repoInfoSet;
+
+  @Setter
+  @Getter
+  private static String localPath;
 
   public static void setRepoInfo(String input) {
     repoInfoSet = JsonUtils.readValue(input, RepoInfoSet.class);
+  }
+
+  public static void reload() {
+    username = ConfigUtils.getString("athena.git.username");
+    password = ConfigUtils.getString("athena.git.password");
+    name = ConfigUtils.getString("athena.git.repo.name");
+    url = ConfigUtils.getString("athena.git.repo.url");
+    repoInfoSet = ConfigUtils.asModel("athena.git.repo.set", RepoInfoSet.class);
+    localPath = ConfigUtils.getString("athena.git.local_path", "./tmp/repository/");
   }
 }
