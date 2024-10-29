@@ -58,6 +58,7 @@ public class JiraConfigs {
             "Epic Name",
             "Epic Link",
             "Component Version",
+            "Parent",
             "Parent Link",
             "Team"));
   }
