@@ -18,6 +18,7 @@ public class JiraParser {
 
   static {
     FIELD_PARSERS.add(JiraCustomFieldOptionParser::new);
+    FIELD_PARSERS.add(field -> new JiraJsonFieldParser(field, "key"));
     FIELD_PARSERS.add(field -> new JiraJsonFieldParser(field, "name"));
     FIELD_PARSERS.add(field -> new JiraJsonFieldParser(field, "value"));
     FIELD_PARSERS.add(JiraIssueFieldParser::new);
