@@ -6,6 +6,7 @@ import io.kubernetes.client.openapi.apis.CoreV1Api;
 import io.kubernetes.client.util.Config;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.catools.athena.rest.feign.kube.enums.KubeConnectionType;
 import org.catools.athena.rest.feign.kube.exception.KubeOperationException;
 
@@ -21,7 +22,11 @@ public class KubeConfigBuilder {
    * @return
    */
   public static CoreV1Api getKubeApiClient() {
-    ApiClient client = getConfig(KubeConnectionType.DEFAULT);
+    KubeConnectionType connectionType = StringUtils.isBlank(KubeConfigs.getConnectionType()) ?
+        KubeConnectionType.DEFAULT :
+        KubeConnectionType.valueOf(KubeConfigs.getConnectionType());
+
+    ApiClient client = getConfig(connectionType);
     Configuration.setDefaultApiClient(client);
     return new CoreV1Api();
   }

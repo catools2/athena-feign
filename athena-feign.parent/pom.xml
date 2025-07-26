@@ -24,7 +24,7 @@
         <maven.compiler.target>${java.version}</maven.compiler.target>
 
         <!-- ###################### CORE ######################### -->
-        <athena-core.version>0.0.4</athena-core.version>
+        <athena-core.version>0.0.6</athena-core.version>
 
         <!-- ###################### COMMON ######################### -->
         <lombok.version>1.18.30</lombok.version>
@@ -44,6 +44,7 @@
         <jira-rest-java-client-core.version>5.2.6</jira-rest-java-client-core.version>
         <fugue.version>5.0.0</fugue.version>
         <json-path.version>2.9.0</json-path.version>
+        <json-smart.version>2.5.2</json-smart.version>
 
         <!-- ###################### KUBERNETES ######################### -->
         <kubernetes.client-java.version>20.0.0-legacy</kubernetes.client-java.version>
@@ -160,6 +161,12 @@
                 <groupId>com.jayway.jsonpath</groupId>
                 <artifactId>json-path</artifactId>
                 <version>${json-path.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>net.minidev</groupId>
+                <artifactId>json-smart</artifactId>
+                <version>${json-smart.version}</version>
             </dependency>
 
             <dependency>

@@ -9,6 +9,7 @@ import com.atlassian.jira.rest.client.api.domain.IssueField;
 import com.atlassian.jira.rest.client.api.domain.IssueLink;
 import com.atlassian.jira.rest.client.api.domain.IssueType;
 import com.atlassian.jira.rest.client.api.domain.Status;
+import com.atlassian.jira.rest.client.api.domain.Subtask;
 import com.atlassian.jira.rest.client.api.domain.Version;
 import com.google.common.collect.Sets;
 import lombok.experimental.UtilityClass;
@@ -63,7 +64,13 @@ public class TranslatorHelper {
 
     if (issue.getIssueLinks() != null) {
       for (final IssueLink issueLink : issue.getIssueLinks()) {
-        item.getMetadata().add(getMetaData("IssueLink", issueLink.getTargetIssueKey()));
+        item.getMetadata().add(getMetaData("Link-" + issueLink.getIssueLinkType().getName(), issueLink.getTargetIssueKey()));
+      }
+    }
+
+    if (issue.getSubtasks() != null) {
+      for (final Subtask issueLink : issue.getSubtasks()) {
+        item.getMetadata().add(getMetaData("SubTask", issueLink.getIssueKey()));
       }
     }
 
@@ -76,7 +83,7 @@ public class TranslatorHelper {
         Stream<Map.Entry<String, String>> fieldsToSync = JiraParser.parserJiraField(field).entrySet().stream();
 
         if (!fieldsToRead.isEmpty()) {
-          fieldsToSync = fieldsToSync.filter(e -> fieldsToRead.contains(e.getKey()));
+          fieldsToSync = fieldsToSync.filter(e -> fieldsToRead.stream().anyMatch(f -> StringUtils.equalsIgnoreCase(f, e.getKey())));
         }
 
         fieldsToSync.forEach(e -> item.getMetadata().add(getMetaData(e.getKey(), e.getValue())));
@@ -125,6 +132,6 @@ public class TranslatorHelper {
   }
 
   public static boolean fieldIsNotNull(IssueField f) {
-    return f.getValue() != null && f.getValue() != JSONObject.EXPLICIT_NULL && f.getValue() != JSONObject.NULL;
+    return f.getValue() != null && !"None".equals(String.valueOf(f.getValue())) && f.getValue() != JSONObject.EXPLICIT_NULL && f.getValue() != JSONObject.NULL;
   }
 }

@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.catools</groupId>
+        <artifactId>athena-feign.parent</artifactId>
+        <version>${revision}</version>
+        <relativePath>../athena-feign.parent/pom.xml</relativePath>
+    </parent>
+
+    <artifactId>athena-feign.bom</artifactId>
+
+    <name>Athena Feign BOM</name>
+    <description>Athena Feign BOM</description>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.catools</groupId>
+                <artifactId>athena-atlassian-jira-feign-cli</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.catools</groupId>
+                <artifactId>athena-atlassian-jira-feign-client</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.catools</groupId>
+                <artifactId>athena-atlassian-scale-feign-cli</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.catools</groupId>
+                <artifactId>athena-atlassian-scale-feign-client</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.catools</groupId>
+                <artifactId>athena-core-feign-client</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.catools</groupId>
+                <artifactId>athena-feign.bom</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.catools</groupId>
+                <artifactId>athena-feign.parent</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.catools</groupId>
+                <artifactId>athena-git-feign-cli</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.catools</groupId>
+                <artifactId>athena-git-feign-client</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.catools</groupId>
+                <artifactId>athena-kube-feign-cli</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.catools</groupId>
+                <artifactId>athena-kube-feign-client</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.catools</groupId>
+                <artifactId>athena-metric-feign-client</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.catools</groupId>
+                <artifactId>athena-openapi-feign-cli</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.catools</groupId>
+                <artifactId>athena-openapi-feign-client</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.catools</groupId>
+                <artifactId>athena-pipeline-feign-client</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.catools</groupId>
+                <artifactId>athena-pipeline-feign-testng-client</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.catools</groupId>
+                <artifactId>athena-tms-feign-client</artifactId>
+                <version>${revision}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+</project>

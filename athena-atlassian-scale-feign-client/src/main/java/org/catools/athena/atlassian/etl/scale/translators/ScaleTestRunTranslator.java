@@ -23,7 +23,7 @@ import static org.catools.athena.rest.feign.tms.helpers.EtlHelper.*;
 @Slf4j
 @UtilityClass
 public class ScaleTestRunTranslator {
-  public static TestCycleDto translateTestRun(final String projectKey, ScaleTestRun testRun, String hash) {
+  public static TestCycleDto translateTestRun(final String projectKey, ScaleTestRun testRun) {
     log.info("Start translating test run {} with {} execution items.", testRun.getKey(), testRun.getItems().size());
 
     Objects.requireNonNull(testRun);
@@ -52,7 +52,6 @@ public class ScaleTestRunTranslator {
 
     log.debug("Finish translating test run {} with {} execution items.", testRun.getKey(), testRun.getItems().size());
 
-    etlCycle.setSha256(hash);
     return etlCycle;
   }
 

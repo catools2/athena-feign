@@ -69,13 +69,8 @@ public class ScaleSyncClient {
         log.info("Start sync {} run.", testRunInfoKey);
         String runDbSyncKey = "SCALE_RUN_" + testRunInfoKey.toUpperCase();
 
-        String previousHash = TmsClient.getSHA256(testRunInfoKey);
-        String currentHash = generateSHA256(scaleTestRun);
-
-        if (previousHash == null || !previousHash.equals(currentHash)) {
-          ScaleTestRun testRun = TestRunClient.getTestRun(testRunInfoKey);
-          syncTestRunExecutions(projectCode, testRun, currentHash);
-        }
+        ScaleTestRun testRun = TestRunClient.getTestRun(testRunInfoKey);
+        syncTestRunExecutions(projectCode, testRun);
 
         TmsClient.saveSyncInfo(projectCode, SYNC_SCALE_RUN, runDbSyncKey, projectSyncStartTime);
         log.info("Finish sync {} run.", testRunInfoKey);
@@ -125,9 +120,9 @@ public class ScaleSyncClient {
     return testcase.getUpdatedOn() != null ? testcase.getUpdatedOn().before(projectLastSync) : testcase.getCreatedOn().before(projectLastSync);
   }
 
-  private void syncTestRunExecutions(final String projectKey, ScaleTestRun testRun, String hash) {
+  private void syncTestRunExecutions(final String projectKey, ScaleTestRun testRun) {
     log.debug("Start updating test run {} with {} execution items.", testRun.getKey(), testRun.getItems().size());
-    TestCycleDto cycle = ScaleTestRunTranslator.translateTestRun(projectKey, testRun, hash);
+    TestCycleDto cycle = ScaleTestRunTranslator.translateTestRun(projectKey, testRun);
     TmsClient.saveTestCycle(cycle);
     log.debug("Finish updating test run {} with {} execution items.", testRun.getKey(), testRun.getItems().size());
   }
