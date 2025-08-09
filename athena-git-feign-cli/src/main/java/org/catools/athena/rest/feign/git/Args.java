@@ -36,6 +36,10 @@ public class Args {
       description = "Set of repositories name and url in json format i.e. [{\"name\": \"...\",\"url\": \"...\"}]")
   private String repoInfoSet;
 
+  @Parameter(names = {"-mp", "-metadata-pattern-info"},
+      description = "Set of metadata name and pattern to read from commit message i.e. [{\"name\": \"...\",\"pattern\": \"...\"}]")
+  private String metadataPatternSet;
+
   @Parameter(names = {"-lp", "-local-path"},
       description = "The path to the local folder where repository should be clone to.")
   private String localPath;
@@ -81,6 +85,9 @@ public class Args {
     }
     if (StringUtils.isNoneBlank(repoInfoSet)) {
       GitConfigs.setRepoInfo(repoInfoSet);
+    }
+    if (StringUtils.isNoneBlank(metadataPatternSet)) {
+      GitConfigs.setMetadataPatternSet(metadataPatternSet);
     }
   }
 

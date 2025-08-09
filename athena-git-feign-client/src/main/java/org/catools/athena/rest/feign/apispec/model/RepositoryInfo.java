@@ -14,6 +14,9 @@ import org.catools.athena.git.model.CommitDto;
 import org.catools.athena.git.model.DiffEntryDto;
 import org.catools.athena.git.model.GitRepositoryDto;
 import org.catools.athena.git.model.TagDto;
+import org.catools.athena.rest.feign.apispec.configs.GitConfigs;
+import org.catools.athena.rest.feign.apispec.entity.MetadataPatternInfo;
+import org.catools.athena.rest.feign.apispec.entity.MetadataPatternSet;
 import org.catools.athena.rest.feign.apispec.exception.GitClientException;
 import org.catools.athena.rest.feign.apispec.helpers.AthenaGitApi;
 import org.catools.athena.rest.feign.core.cache.CoreCache;
@@ -41,10 +44,11 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.time.Instant;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static org.catools.athena.rest.feign.common.utils.ThreadUtils.executeInParallel;
 
@@ -58,6 +62,7 @@ public class RepositoryInfo {
   private final Git git;
   private final String name;
   private final String url;
+  private final MetadataPatternSet metadataPatternSet = GitConfigs.getMetadataPatternSet();
 
   private GitRepositoryDto repositoryDto = new GitRepositoryDto();
 
@@ -155,6 +160,7 @@ public class RepositoryInfo {
 
     readDiffEntries(repo, commit, gitCommit);
     readRelatedTags(commit, gitCommit);
+    readMetadata(commit, gitCommit);
     return gitCommit;
   }
 
@@ -243,6 +249,29 @@ public class RepositoryInfo {
     }
 
     diffEntries.add(gitFileChange);
+  }
+
+  protected void readMetadata(RevCommit commit, CommitDto gitCommit) {
+    for (MetadataPatternInfo metadataPatternInfo : metadataPatternSet) {
+      Matcher matcher = Pattern.compile(metadataPatternInfo.getPattern(), Pattern.CASE_INSENSITIVE)
+          .matcher(commit.getFullMessage());
+      while (matcher.find()) {
+        gitCommit.getMetadata().add(new MetadataDto(metadataPatternInfo.getName(), matcher.group(1)));
+      }
+
+    }
+  }
+
+  protected static String getContentDiff(Repository repository, DiffEntry diff) {
+    try (ByteArrayOutputStream out = new ByteArrayOutputStream(); DiffFormatter formatter = new DiffFormatter(out)) {
+
+      formatter.setRepository(repository);
+      formatter.format(diff);
+
+      return out.toString();
+    } catch (IOException e) {
+      throw new GitClientException("Failed to read content diff.", e);
+    }
   }
 
   private static AbstractTreeIterator getParser(Repository repo, RevCommit commit) {
