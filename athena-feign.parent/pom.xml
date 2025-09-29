@@ -29,7 +29,7 @@
         <!-- ###################### COMMON ######################### -->
         <lombok.version>1.18.30</lombok.version>
         <junit-jupiter.version>5.10.1</junit-jupiter.version>
-        <feign.version>13.3</feign.version>
+        <feign.version>13.6</feign.version>
         <slf4j-api.version>2.1.0-alpha1</slf4j-api.version>
         <log4j-slf4j2-impl.version>3.0.0-beta2</log4j-slf4j2-impl.version>
         <swagger-core.version>2.2.20</swagger-core.version>
