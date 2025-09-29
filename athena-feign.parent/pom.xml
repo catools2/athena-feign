@@ -50,7 +50,7 @@
         <kubernetes.client-java.version>20.0.0-legacy</kubernetes.client-java.version>
 
         <!-- ###################### CONFIG ######################### -->
-        <typesafe.version>1.4.3</typesafe.version>
+        <typesafe.version>1.4.5</typesafe.version>
 
         <!-- ###################### VALIDATOR ######################### -->
         <hibernate-validator.version>8.0.1.Final</hibernate-validator.version>
