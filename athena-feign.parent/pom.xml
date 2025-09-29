@@ -38,7 +38,7 @@
         <failsafe.version>3.3.2</failsafe.version>
 
         <!-- ###################### GIT ######################### -->
-        <jgit.version>6.8.0.202311291450-r</jgit.version>
+        <jgit.version>6.10.1.202505221210-r</jgit.version>
 
         <!-- ###################### ATLASSIAN ######################### -->
         <jira-rest-java-client-core.version>5.2.6</jira-rest-java-client-core.version>
