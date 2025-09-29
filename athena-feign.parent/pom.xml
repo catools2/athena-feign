@@ -34,7 +34,7 @@
         <log4j-slf4j2-impl.version>3.0.0-beta2</log4j-slf4j2-impl.version>
         <swagger-core.version>2.2.20</swagger-core.version>
         <jcommander.version>1.82</jcommander.version>
-        <guava.version>33.1.0-jre</guava.version>
+        <guava.version>33.5.0-jre</guava.version>
         <failsafe.version>3.3.2</failsafe.version>
 
         <!-- ###################### GIT ######################### -->
