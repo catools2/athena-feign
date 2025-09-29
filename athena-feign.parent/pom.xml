@@ -53,7 +53,7 @@
         <typesafe.version>1.4.3</typesafe.version>
 
         <!-- ###################### VALIDATOR ######################### -->
-        <hibernate-validator.version>8.0.1.Final</hibernate-validator.version>
+        <hibernate-validator.version>8.0.3.Final</hibernate-validator.version>
 
         <!-- ###################### PLUGIN ######################### -->
         <maven-failsafe-plugin.version>3.1.2</maven-failsafe-plugin.version>
