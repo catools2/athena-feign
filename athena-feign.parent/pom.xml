@@ -42,7 +42,7 @@
 
         <!-- ###################### ATLASSIAN ######################### -->
         <jira-rest-java-client-core.version>5.2.6</jira-rest-java-client-core.version>
-        <fugue.version>5.0.0</fugue.version>
+        <fugue.version>5.0.2</fugue.version>
         <json-path.version>2.9.0</json-path.version>
         <json-smart.version>2.5.2</json-smart.version>
 
