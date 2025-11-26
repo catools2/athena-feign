@@ -10,12 +10,14 @@
     <packaging>pom</packaging>
 
     <properties>
+        <revision>1.0.0-SNAPSHOT</revision>
         <maven.deploy.skip>true</maven.deploy.skip>
     </properties>
 
     <modules>
 
         <module>athena-feign.parent</module>
+        <module>athena-feign.bom</module>
         <module>athena-core-feign-client</module>
 
         <module>athena-git-feign-client</module>
