@@ -16,6 +16,7 @@
     <modules>
 
         <module>athena-feign.parent</module>
+        <module>athena-feign.bom</module>
         <module>athena-core-feign-client</module>
 
         <module>athena-git-feign-client</module>
