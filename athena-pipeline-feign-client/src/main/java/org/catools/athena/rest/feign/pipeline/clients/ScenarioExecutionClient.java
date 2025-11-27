@@ -6,7 +6,7 @@ import feign.Response;
 import org.catools.athena.pipeline.model.PipelineScenarioExecutionDto;
 
 public interface ScenarioExecutionClient {
-  @RequestLine("POST /scenario")
+  @RequestLine("POST /pipeline/scenario")
   @Headers("Content-Type: application/json")
   Response saveScenarioExecution(PipelineScenarioExecutionDto execution);
 

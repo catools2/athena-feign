@@ -26,7 +26,7 @@ class KubeCommandsTest {
   @Test
   void load_withAthenaHost_shouldUpdateConfig() {
     // Given
-    String athenaHost = "http://test-athena:8080/api";
+    String athenaHost = "http://test-athena:8080";
 
     // When
     CoreConfigs.setAthenaHost(athenaHost);

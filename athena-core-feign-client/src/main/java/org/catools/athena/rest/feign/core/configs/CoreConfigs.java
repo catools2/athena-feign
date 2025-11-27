@@ -60,7 +60,7 @@ public class CoreConfigs {
   private static Long timeoutInMinutes;
 
   public static void reload() {
-    athenaHost = ConfigUtils.getString("athena.host", "http://localhost:8080/api");
+    athenaHost = ConfigUtils.getString("athena.host", "http://localhost:8080");
     projectName = ConfigUtils.getString("athena.project.name");
     projectCode = ConfigUtils.getString("athena.project.code");
     environmentName = ConfigUtils.getString("athena.environment.name");

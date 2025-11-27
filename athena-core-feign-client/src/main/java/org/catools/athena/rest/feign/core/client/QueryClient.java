@@ -7,12 +7,12 @@ import java.util.Set;
 
 interface QueryClient {
 
-  @RequestLine("GET /query/record?query={query}")
+  @RequestLine("GET /core/query/record?query={query}")
   Object querySingleResult(
       @Param("query")
       String query);
 
-  @RequestLine("GET /query/records?query={query}")
+  @RequestLine("GET /core/query/records?query={query}")
   Set<Object> queryCollection(
       @Param("query")
       String query);

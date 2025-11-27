@@ -6,12 +6,12 @@ import feign.RequestLine;
 import org.catools.athena.core.model.EnvironmentDto;
 
 interface EnvironmentClient {
-  @RequestLine("GET /environment?keyword={keyword}")
+  @RequestLine("GET /core/environment?keyword={keyword}")
   EnvironmentDto search(
       @Param("keyword")
       String keyword);
 
-  @RequestLine("POST /environment")
+  @RequestLine("POST /core/environment")
   @Headers("Content-Type: application/json")
   void saveOrUpdate(EnvironmentDto environment);
 }

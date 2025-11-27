@@ -8,12 +8,12 @@ import org.catools.athena.git.model.GitRepositoryDto;
 
 
 public interface RepositoryClient {
-  @RequestLine("GET /repo?keyword={keyword}")
+  @RequestLine("GET /git/repo?keyword={keyword}")
   GitRepositoryDto search(
       @Param("keyword")
       String keyword);
 
-  @RequestLine("POST /repo")
+  @RequestLine("POST /git/repo")
   @Headers("Content-Type: application/json")
   Response save(GitRepositoryDto repository);
 }

@@ -30,7 +30,7 @@ class ScaleCommandsTest {
   @Test
   void sync_withAllParameters_shouldConfigureAndExecuteSync() {
     // Given
-    String athenaHost = "http://test-athena:8080/api";
+    String athenaHost = "http://test-athena:8080";
     String scaleHost = "https://test-scale.com";
     String scaleAccessToken = "test-token";
     String scaleUsername = "testuser";
@@ -83,7 +83,7 @@ class ScaleCommandsTest {
       assertThat(ScaleConfigs.getTestRunFoldersToSync()).isEqualTo(testRunFolders);
       assertThat(ScaleConfigs.getTestCasesFoldersToSync()).isEqualTo(testCaseFolders);
 
-      mockedSyncClient.verify(() -> ScaleSyncClient.syncTestCases());
+      mockedSyncClient.verify(ScaleSyncClient::syncTestCases);
     }
   }
 
@@ -102,8 +102,8 @@ class ScaleCommandsTest {
       );
 
       // Then
-      mockedSyncClient.verify(() -> ScaleSyncClient.syncTestCases());
-      mockedSyncClient.verify(() -> ScaleSyncClient.syncTestRuns());
+      mockedSyncClient.verify(ScaleSyncClient::syncTestCases);
+      mockedSyncClient.verify(ScaleSyncClient::syncTestRuns);
     }
   }
 
@@ -122,7 +122,7 @@ class ScaleCommandsTest {
       );
 
       // Then
-      mockedSyncClient.verify(() -> ScaleSyncClient.syncTestCases());
+      mockedSyncClient.verify(ScaleSyncClient::syncTestCases);
       mockedSyncClient.verifyNoMoreInteractions();
     }
   }
@@ -142,7 +142,7 @@ class ScaleCommandsTest {
       );
 
       // Then
-      mockedSyncClient.verify(() -> ScaleSyncClient.syncTestRuns());
+      mockedSyncClient.verify(ScaleSyncClient::syncTestRuns);
       mockedSyncClient.verifyNoMoreInteractions();
     }
   }

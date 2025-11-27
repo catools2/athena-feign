@@ -18,7 +18,7 @@ class CoreConfigsTest {
   @Test
   void setAndGetAthenaHost_shouldWorkCorrectly() {
     // Given
-    String expectedHost = "http://test.example.com:9090/api";
+    String expectedHost = "http://test.example.com:9090";
 
     // When
     CoreConfigs.setAthenaHost(expectedHost);

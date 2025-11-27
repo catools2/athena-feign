@@ -30,7 +30,7 @@ class JiraCommandsTest {
   @Test
   void sync_withAllParameters_shouldConfigureAndExecuteSync() {
     // Given
-    String athenaHost = "http://test-athena:8080/api";
+    String athenaHost = "http://test-athena:8080";
     String jiraHost = "https://test-jira.com";
     String jiraAccessToken = "test-token";
     String jiraUsername = "testuser";
@@ -77,7 +77,7 @@ class JiraCommandsTest {
       assertThat(JiraConfigs.getFieldsToRead()).isEqualTo(fieldsToRead);
       assertThat(JiraConfigs.getIssueTypes()).isEqualTo(issueTypes);
 
-      mockedSyncClient.verify(() -> JiraSyncClient.syncJira());
+      mockedSyncClient.verify(JiraSyncClient::syncJira);
     }
   }
 
@@ -111,7 +111,7 @@ class JiraCommandsTest {
       assertThat(CoreConfigs.getProjectName()).isEqualTo("Default Project");
       assertThat(CoreConfigs.getProjectCode()).isEqualTo("DEF");
 
-      mockedSyncClient.verify(() -> JiraSyncClient.syncJira());
+      mockedSyncClient.verify(JiraSyncClient::syncJira);
     }
   }
 
@@ -143,7 +143,7 @@ class JiraCommandsTest {
       assertThat(JiraConfigs.getJiraHost()).isEqualTo(newJiraHost);
       assertThat(CoreConfigs.getProjectCode()).isEqualTo(newProjectCode);
 
-      mockedSyncClient.verify(() -> JiraSyncClient.syncJira());
+      mockedSyncClient.verify(JiraSyncClient::syncJira);
     }
   }
 }

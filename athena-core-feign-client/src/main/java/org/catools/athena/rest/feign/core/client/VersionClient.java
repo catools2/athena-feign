@@ -7,12 +7,12 @@ import org.catools.athena.core.model.VersionDto;
 
 interface VersionClient {
 
-  @RequestLine("GET /version?keyword={keyword}")
+  @RequestLine("GET /core/version?keyword={keyword}")
   VersionDto search(
       @Param("keyword")
       String keyword);
 
-  @RequestLine("POST /version")
+  @RequestLine("POST /core/version")
   @Headers("Content-Type: application/json")
   void saveOrUpdate(VersionDto version);
 

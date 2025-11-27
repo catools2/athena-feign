@@ -6,12 +6,12 @@ import feign.RequestLine;
 import org.catools.athena.core.model.UserDto;
 
 interface UserClient {
-  @RequestLine("GET /user?keyword={keyword}")
+  @RequestLine("GET /core/user?keyword={keyword}")
   UserDto search(
       @Param("keyword")
       String keyword);
 
-  @RequestLine("POST /user")
+  @RequestLine("POST /core/user")
   @Headers("Content-Type: application/json")
   void saveOrUpdate(UserDto user);
 }

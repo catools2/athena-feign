@@ -25,7 +25,7 @@ class GitCommandsTest {
   @Test
   void load_withAthenaHost_shouldUpdateConfig() {
     // Given
-    String athenaHost = "http://test-athena:9090/api";
+    String athenaHost = "http://test-athena:9090";
 
     // When - Note: We can't test the full load without mocking static methods
     // Just test configuration updates

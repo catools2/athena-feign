@@ -7,7 +7,7 @@ import org.catools.athena.pipeline.model.PipelineExecutionDto;
 
 public interface ExecutionClient {
 
-  @RequestLine("POST /execution")
+  @RequestLine("POST /pipeline/execution")
   @Headers("Content-Type: application/json")
   Response saveExecution(PipelineExecutionDto project);
 

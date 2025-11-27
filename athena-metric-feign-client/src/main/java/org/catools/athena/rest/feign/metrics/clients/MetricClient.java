@@ -7,7 +7,7 @@ import org.catools.athena.metrics.model.MetricDto;
 
 public interface MetricClient {
 
-  @RequestLine("POST /metric")
+  @RequestLine("POST /kube/metric")
   @Headers("Content-Type: application/json")
   Response saveMetric(MetricDto metric);
 
